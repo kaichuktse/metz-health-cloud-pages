@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metz/Chef2Home · Health Cloud 2026</title>
+<style>
+  :root {
+    --sf-navy:        #001E5B;
+    --sf-type:        #002775;
+    --sf-container:   #022AC0;
+    --sf-blue:        #066AFE;
+    --sf-cloud:       #00B3FF;
+    --sf-cloud-80:    #90D0FE;
+    --sf-bg:          #CFE9FE;
+    --sf-light-bg:    #EAF5FE;
+    --sf-text:        #002775;
+    --sf-text-weak:   #4A5578;
+    --ext-teal:       #06A59A;  --ext-teal-80: #04E1CB;  --ext-teal-95:   #DEF9F3;
+    --ext-yellow:     #FCC003;  --ext-yellow-70: #E4A201; --ext-yellow-95: #FBF3E0;
+    --ext-pink:       #FF538A;  --ext-pink-40: #B60554;  --ext-pink-95:   #FEF0F3;
+    --ext-violet:     #D17DFE;  --ext-violet-30: #730394; --ext-violet-95: #F9F0FF;
+    --sf-ok:      #2E844A;  --sf-ok-bg:      #EAFCE9;
+    --sf-warn:    #DD7A01;  --sf-warn-bg:    #FFF7E6;
+    --sf-bad:     #BA0517;  --sf-bad-bg:     #FDECEB;
+    --sf-neutral: #94A3B3;  --sf-neutral-bg: #F3F6FA;
+    --client-primary: #E45B10;
+    --client-dark:    #B8480C;
+    --font-heading: 'ITC Avant Garde Gothic Demi','Avant Garde','Century Gothic','Salesforce Sans','Source Sans 3',Arial,sans-serif;
+    --font-body:    'Salesforce Sans','Source Sans 3','Helvetica Neue',Arial,sans-serif;
+    --fs-title:54px; --fs-subtitle:36px; --fs-l1:30px; --fs-cat:26px;
+    --fs-l2:24px; --fs-desc:22px; --fs-body:16px;
+    --space-xs:4px; --space-sm:8px; --space-md:16px;
+    --space-lg:24px; --space-xl:32px; --space-2xl:48px;
+    --radius-sm:4px; --radius-md:8px; --radius-lg:16px;
+    --shadow-brand:2.6px 9.7px 25px rgba(6,106,254,0.15);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font-body);color:var(--sf-text);background:var(--sf-light-bg);-webkit-font-smoothing:antialiased;line-height:1.55;}
+  h1,h2,h3,.sz-stat-num{font-family:var(--font-heading);color:var(--sf-navy);line-height:1.15;}
+  a{color:var(--sf-blue);}
+  :focus-visible{outline:3px solid var(--sf-blue);outline-offset:2px;border-radius:2px;}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
+  .sz-section{margin:var(--space-2xl) 0;}
+  .sz-section-eyebrow{font-family:var(--font-heading);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sf-blue);margin-bottom:var(--space-xs);}
+  .sz-section-title{font-size:var(--fs-cat);margin-bottom:var(--space-md);}
+  .sz-card{background:#fff;border-radius:var(--radius-md);padding:var(--space-lg);box-shadow:var(--shadow-brand);}
+  .sz-card+.sz-card{margin-top:var(--space-md);}
+  .sz-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--space-md);}
+  .sz-stat{background:#fff;border-radius:var(--radius-md);padding:var(--space-lg) var(--space-md);text-align:center;box-shadow:var(--shadow-brand);}
+  .sz-stat-num{font-size:42px;color:var(--client-primary);}
+  .sz-stat-lbl{font-size:13px;color:var(--sf-text-weak);margin-top:var(--space-xs);}
+  .sz-table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-brand);}
+  .sz-table th{background:var(--sf-container);color:#fff;font-family:var(--font-heading);text-align:left;padding:var(--space-sm) var(--space-md);font-size:14px;}
+  .sz-table td{padding:var(--space-sm) var(--space-md);border-top:1px solid var(--sf-light-bg);font-size:14px;vertical-align:top;}
+  .sz-table tbody tr:nth-child(even){background:var(--sf-light-bg);}
+  .sz-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;line-height:1.6;}
+  .sz-tag--critical{background:var(--ext-pink-95);color:var(--ext-pink-40);}
+  .sz-tag--high{background:var(--ext-yellow-95);color:var(--ext-yellow-70);}
+  .sz-tag--medium{background:var(--ext-yellow-95);color:var(--ext-yellow-70);}
+  .sz-tag--low{background:var(--ext-teal-95);color:var(--ext-teal);}
+  .sz-tag--info{background:var(--sf-light-bg);color:var(--sf-blue);}
+  .sz-tag--sz-s{background:var(--sf-light-bg);color:var(--sf-blue);}
+  .sz-tag--sz-m{background:#DCEBFF;color:var(--sf-blue);}
+  .sz-tag--sz-l{background:var(--sf-cloud);color:var(--sf-navy);}
+  .sz-tag--sz-xl{background:var(--sf-container);color:#fff;}
+  .sz-tag--ps{background:#F3F0FF;color:#5B21B6;}
+  .sz-tag--wsi{background:#F0FDF4;color:#15803D;}
+  .sz-tag--unknown{background:var(--sf-neutral-bg);color:var(--sf-neutral);}
+  .sz-tag--assumed{background:var(--ext-yellow-95);color:var(--ext-yellow-70);}
+  .sz-tldr{background:var(--sf-light-bg);border-left:4px solid var(--sf-blue);border-radius:var(--radius-sm);padding:var(--space-md) var(--space-lg);margin:var(--space-lg) 0;}
+  .sz-tldr-label{font-family:var(--font-heading);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--sf-blue);margin-bottom:var(--space-xs);}
+  .sz-timeline{display:flex;gap:2px;border-radius:var(--radius-sm);overflow:hidden;box-shadow:var(--shadow-brand);}
+  .sz-phase{flex:1;padding:var(--space-md);color:#fff;text-align:center;font-size:14px;}
+  .sz-phase:nth-child(1){background:var(--sf-navy);}
+  .sz-phase:nth-child(2){background:var(--sf-container);}
+  .sz-phase:nth-child(3){background:var(--sf-blue);}
+  .sz-phase-name{font-family:var(--font-heading);font-size:15px;}
+  .sz-phase-wks{opacity:.85;font-size:12px;margin-top:2px;}
+  .sz-phase-dates{opacity:.75;font-size:11px;margin-top:2px;}
+  .sz-chips{display:flex;flex-wrap:wrap;gap:var(--space-xs);}
+  .sz-chip{background:var(--sf-light-bg);color:var(--sf-container);border:1px solid var(--sf-cloud-80);border-radius:999px;padding:4px 12px;font-size:13px;}
+  .sz-cta{display:inline-block;background:var(--sf-blue);color:#fff;font-family:var(--font-heading);text-decoration:none;padding:var(--space-sm) var(--space-lg);border-radius:999px;box-shadow:var(--shadow-brand);border:none;cursor:pointer;}
+  .sz-panorama{position:relative;padding:var(--space-2xl) var(--space-xl);text-align:center;border-radius:var(--radius-lg);box-shadow:var(--shadow-brand);overflow:hidden;}
+  .sz-panorama--navy{background:linear-gradient(135deg,var(--sf-navy),var(--sf-container));color:#fff;}
+  .sz-panorama h2{color:inherit;font-size:var(--fs-l1);}
+  .sz-panorama p{color:rgba(255,255,255,.8);margin-top:var(--space-sm);}
+  .shot-btn{position:absolute;top:14px;right:16px;font-size:11px;font-weight:600;color:var(--sf-blue);background:#fff;border:1px solid var(--sf-cloud-80);border-radius:5px;padding:4px 9px;cursor:pointer;z-index:2;}
+  .shot-btn:hover{background:var(--sf-light-bg);}
+  [data-shot]{background:#fff;position:relative;}
+  @media print{.shot-btn,.sz-export{display:none;}}
+  .sz-wrap{max-width:980px;margin:0 auto;padding:var(--space-2xl) var(--space-lg);}
+  .sz-hero{background:linear-gradient(135deg,var(--sf-container),var(--sf-blue));color:#fff;padding:var(--space-2xl) var(--space-lg);}
+  .sz-hero h1{color:#fff;font-size:var(--fs-subtitle);max-width:700px;}
+  .sz-hero p{color:var(--sf-cloud-80);margin-top:var(--space-sm);font-size:16px;}
+  .sz-cobrand{display:flex;align-items:center;gap:var(--space-md);margin-bottom:var(--space-lg);}
+  .sz-cobrand svg{height:30px;width:auto;}
+  .sz-cobrand-x{color:var(--sf-cloud-80);font-size:18px;}
+  .sz-sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:#fff;border-right:1px solid var(--sf-cloud-80);overflow-y:auto;z-index:200;display:flex;flex-direction:column;padding-bottom:var(--space-lg);transform:translateX(-100%);transition:transform .22s ease;box-shadow:4px 0 20px rgba(0,30,91,.12);}
+  .sz-sidebar.open{transform:translateX(0);}
+  .sz-sidebar-header{padding:var(--space-md) var(--space-md) var(--space-sm);display:flex;align-items:center;justify-content:space-between;font-family:var(--font-heading);font-size:13px;font-weight:700;color:var(--sf-navy);border-bottom:1px solid var(--sf-cloud-80);letter-spacing:.04em;}
+  .sz-sidebar-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--sf-text-weak);line-height:1;padding:0;}
+  .sz-sidebar-close:hover{color:var(--sf-navy);}
+  .sz-sidebar-group{padding:var(--space-sm) 0;border-bottom:1px solid var(--sf-light-bg);}
+  .sz-sidebar-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sf-text-weak);padding:var(--space-sm) var(--space-md) 4px;}
+  .sz-sidebar-link{display:block;padding:6px var(--space-md);font-size:13px;text-decoration:none;color:var(--sf-container);border-left:3px solid transparent;line-height:1.3;}
+  .sz-sidebar-link:hover{background:var(--sf-light-bg);color:var(--sf-navy);}
+  .sz-sidebar-link.active{background:var(--sf-light-bg);border-left-color:var(--client-primary);color:var(--sf-navy);font-weight:600;}
+  .sz-sidebar-footer{margin-top:auto;padding:var(--space-md);}
+  .sz-sources-btn{display:block;text-align:center;font-size:12px;font-weight:700;padding:5px 14px;border-radius:4px;background:var(--sf-blue);color:#fff !important;text-decoration:none !important;letter-spacing:.02em;}
+  .sz-sources-btn:hover{background:var(--sf-container);}
+  .sz-sidebar-toggle{display:flex;position:fixed;top:14px;left:14px;z-index:300;background:var(--sf-navy);color:#fff;border:none;border-radius:6px;width:36px;height:36px;font-size:18px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,30,91,.25);}
+  .sz-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:199;}
+  .sz-overlay.active{display:block;}
+  .sz-export{text-align:center;margin:var(--space-2xl) 0 var(--space-lg);}
+  html{scroll-behavior:smooth;}
+  section{scroll-margin-top:16px;}
+  .sz-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-md);}
+  .sz-risk-row td:first-child{font-weight:600;}
+  .sz-legend{display:flex;flex-wrap:wrap;gap:var(--space-sm);margin-top:var(--space-md);align-items:center;font-size:13px;color:var(--sf-text-weak);}
+  .sz-divider{border:none;border-top:1px solid var(--sf-cloud-80);margin:var(--space-2xl) 0;}
+  @media(max-width:720px){.sz-grid-2{grid-template-columns:1fr;}.sz-timeline{flex-direction:column;}.sz-stats{grid-template-columns:repeat(2,1fr);}}
+</style>
+
+<style>
+  :root{--client-primary:#022AC0;}
+  .sz-stats{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));}
+  .sz-stat-num{white-space:nowrap;font-size:34px;}
+  .sz-tag--confirmed{background:var(--sf-ok-bg);color:var(--sf-ok);}
+  .sz-tag--conditional{background:var(--ext-violet-95);color:var(--ext-violet-30);}
+  .sz-tag--anchor{background:var(--sf-ok-bg);color:var(--sf-ok);}
+  .sz-note{font-size:13px;color:var(--sf-text-weak);margin:var(--space-sm) 0 var(--space-md);}
+  .sz-disclaimer{font-size:12px;font-style:italic;color:var(--sf-text-weak);border-left:3px solid var(--sf-cloud-80);padding:4px 12px;margin:var(--space-md) 0;}
+  .sz-banner{background:var(--sf-warn-bg);border-left:4px solid var(--sf-warn);padding:var(--space-sm) var(--space-md);border-radius:var(--radius-sm);font-size:13px;margin:var(--space-md) 0;}
+  .sz-lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-md);}
+  .sz-lane{background:#fff;border-radius:var(--radius-md);padding:var(--space-lg);box-shadow:var(--shadow-brand);border-top:4px solid var(--sf-neutral);}
+  .sz-lane--anchor{border-top-color:var(--ext-violet);border-top-style:dashed;}
+  .sz-lane h3{font-size:18px;margin-bottom:4px;}
+  .sz-lane .big{font-family:var(--font-heading);font-size:30px;color:var(--client-primary);margin:var(--space-sm) 0 0;}
+  .sz-lane dl{font-size:13px;margin-top:var(--space-sm);}
+  .sz-lane dt{color:var(--sf-text-weak);margin-top:6px;}
+  .sz-lane dd{font-weight:600;}
+  .sz-ms-list{font-size:13px;margin:var(--space-sm) 0 0 18px;}
+  .num{text-align:right;white-space:nowrap;}
+  tr.sz-total td{font-weight:700;background:#DCEBFF!important;}
+  tr.sz-opt td{color:var(--sf-text-weak);font-style:italic;}
+  .g-wrap{background:#fff;border-radius:var(--radius-md);box-shadow:var(--shadow-brand);padding:var(--space-md) var(--space-md) 30px;overflow-x:auto;margin-bottom:var(--space-md);}
+  .g-row{display:flex;align-items:center;min-height:26px;}
+  .g-sep{min-height:8px;border-bottom:1px solid var(--sf-light-bg);margin-bottom:4px;}
+  .g-lbl{flex:0 0 300px;font-size:12px;padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .g-track{position:relative;flex:1;height:22px;min-width:560px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/var(--cols,26) - 1px),var(--sf-light-bg) calc(100%/var(--cols,26) - 1px),var(--sf-light-bg) calc(100%/var(--cols,26)));}
+  .g-ticks{background:none;height:18px;}
+  .g-ticks span{position:absolute;transform:translateX(-50%);font-size:10px;color:var(--sf-text-weak);}
+  .g-bar{position:absolute;top:3px;height:16px;border-radius:3px;background:var(--sf-blue);color:#fff;font-size:10px;line-height:16px;text-align:center;overflow:hidden;}
+  .g-bar--phase{background:var(--sf-container);}
+  .g-bar--mule{background:#06A59A;}
+  .g-bar--ramp{background:repeating-linear-gradient(45deg,var(--ext-yellow-70),var(--ext-yellow-70) 6px,var(--ext-yellow) 6px,var(--ext-yellow) 12px);color:var(--sf-navy);}
+  .g-bar--care{background:var(--sf-text-weak);}
+  .g-body{position:relative;}
+  .g-ms-layer{position:absolute;top:0;bottom:0;left:300px;right:0;pointer-events:none;}
+  .g-ms{position:absolute;top:0;bottom:0;border-left:2px dashed var(--client-primary);}
+  .g-ms span{position:absolute;bottom:-18px;left:-4px;font-size:10px;font-weight:700;color:var(--client-primary);white-space:nowrap;}
+  .g-legend{font-size:12px;color:var(--sf-text-weak);margin-top:8px;}
+  .sz-filter button{font-size:12px;border:1px solid var(--sf-cloud-80);background:#fff;color:var(--sf-container);border-radius:999px;padding:3px 10px;margin:0 4px 6px 0;cursor:pointer;}
+  .sz-filter button.on{background:var(--sf-container);color:#fff;}
+  .sz-doc h1{font-size:26px;margin:var(--space-lg) 0 var(--space-sm);}
+  .sz-doc h2{font-size:20px;margin:var(--space-lg) 0 var(--space-sm);}
+  .sz-doc h3{font-size:16px;margin:var(--space-md) 0 var(--space-xs);}
+  .sz-doc p,.sz-doc li{font-size:14px;margin-bottom:6px;}
+  .sz-doc ul,.sz-doc ol{padding-left:22px;margin-bottom:var(--space-sm);}
+  .sz-doc table{width:100%;border-collapse:collapse;margin:var(--space-sm) 0 var(--space-md);font-size:13px;background:#fff;}
+  .sz-doc th{background:var(--sf-container);color:#fff;text-align:left;padding:6px 10px;}
+  .sz-doc td{padding:6px 10px;border-top:1px solid var(--sf-light-bg);vertical-align:top;}
+  .sz-doc blockquote{border-left:3px solid var(--sf-cloud-80);padding:4px 12px;color:var(--sf-text-weak);margin:var(--space-sm) 0;}
+  .sz-doc code{font-size:12px;background:var(--sf-light-bg);padding:1px 4px;border-radius:3px;}
+  .sz-topnav a{color:#fff;margin-right:var(--space-md);font-size:14px;}
+  @media(max-width:860px){.sz-lanes{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header class="sz-hero">
+  <div class="sz-wrap" style="padding-top:0;padding-bottom:0;">
+    <div class="sz-cobrand"><svg role="img" aria-label="Salesforce" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 205.735 144"><g><path fill-rule="nonzero" fill="rgb(17.7%,62%,87.5%)" d="M85.5 15.8C92.1 8.9 101.4 4.6 111.6 4.6c13.6 0 25.4 7.6 31.7 18.8 5.5-2.4 11.6-3.8 17.9-3.8 24.5 0 44.3 20 44.3 44.7s-19.8 44.7-44.3 44.7c-3 0-5.9-.3-8.7-.9-5.5 9.9-16.1 16.6-28.2 16.6-5.1 0-9.9-1.2-14.2-3.3C104.4 134.6 91.3 143.9 76 143.9c-15.3 0-29.5-10.1-34.7-24.2-2.3.5-4.6.7-7 .7C15.4 120.5 0 105 0 85.8c0-12.8 6.9-24 17.1-30-2.1-4.9-3.2-10.2-3.2-15.9C13.9 17.9 31.7.1 53.8.1c12.9 0 24.4 6.1 31.7 15.7"/></g><path fill="#fff" d="M29.8 74.7c-.1.3.1.4.1.4.4.3.8.5 1.2.7 2.1 1.1 4.1 1.4 6.1 1.4 4.2 0 6.8-2.2 6.8-5.8v-.1c0-3.3-2.9-4.6-5.7-5.4l-.4-.1c-2.1-.7-3.9-1.3-3.9-2.6v-.1c0-1.2 1.1-2.1 2.7-2.1 1.8 0 4 .6 5.4 1.4 0 0 .4.3.5-.1.1-.2.8-2.1.8-2.3.1-.2 0-.4-.1-.5-1.6-1-3.8-1.6-6-1.6h-.4c-3.9 0-6.5 2.3-6.5 5.7v.1c0 3.5 3 4.6 5.8 5.4l.4.1c2 .6 3.8 1.1 3.8 2.6v.1c0 1.3-1.1 2.3-2.9 2.3-.7 0-3-.1-5.4-1.6-.3-.2-.5-.3-.7-.4-.1-.1-.4-.2-.5.2l-.8 2.3zM91.5 74.7c-.1.3.1.4.1.4.4.3.8.5 1.2.7 2.1 1.1 4.1 1.4 6.1 1.4 4.2 0 6.8-2.2 6.8-5.8v-.1c0-3.3-2.9-4.6-5.7-5.4l-.4-.1c-2.1-.7-3.9-1.3-3.9-2.6v-.1c0-1.2 1.1-2.1 2.7-2.1 1.8 0 4 .6 5.4 1.4 0 0 .4.3.5-.1.1-.2.8-2.1.8-2.3.1-.2 0-.4-.1-.5-1.6-1-3.8-1.6-6-1.6h-.4c-3.9 0-6.5 2.3-6.5 5.7v.1c0 3.5 3 4.6 5.8 5.4l.4.1c2 .6 3.8 1.1 3.8 2.6v.1c0 1.3-1.1 2.3-2.9 2.3-.7 0-3-.1-5.4-1.6-.3-.2-.5-.3-.7-.4-.1-.1-.4-.2-.5.2l-.8 2.3zM133.6 67.6c0 2-.4 3.6-1.1 4.8-.7 1.1-1.9 1.7-3.5 1.7s-2.7-.5-3.4-1.7c-.7-1.1-1.1-2.8-1.1-4.8s.4-3.6 1.1-4.8c.7-1.1 1.9-1.7 3.4-1.7s1.7.5 2.5 1.7c.7 1.1 1.1 2.8 1.1 4.8m3.5-3.8c-.3-1.2-.9-2.2-1.6-3.1-.7-.9-1.6-1.6-2.7-2.1-1.1-.5-2.3-.8-3.7-.8s-2.7.3-3.8.8c-1.1.5-2 1.2-2.7 2.1-.7.9-1.2 1.9-1.6 3.1-.3 1.2-.5 2.4-.5 3.8s.2 2.6.5 3.8c.3 1.2.9 2.2 1.6 3.1.7.9 1.6 1.6 2.7 2.1 1.1.5 2.3.8 3.8.8s2.7-.3 3.7-.8c1.1-.5 2-1.2 2.7-2.1.7-.9 1.2-1.9 1.6-3.1.3-1.2.5-2.4.5-3.8s-.2-2.6-.5-3.8M166 73.5c-.1-.3-.5-.2-.5-.2-.5.2-1.1.4-1.6.5-.6.1-1.2.1-1.9.1-1.7 0-3.1-.5-4.1-1.5-1-.9-1.5-2.6-1.5-4.8 0-2 .5-3.5 1.4-4.6.9-1.1 2.2-1.7 3.9-1.7 1.4 0 2.5.2 3.7.6 0 0 .3.1.4-.3.3-.9.5-1.5.8-2.4.1-.3-.1-.4-.2-.4-.5-.2-1.5-.5-2.4-.6-.8-.1-1.6-.2-2.6-.2-1.5 0-2.8.2-3.9.7-1.1.5-2.1 1.2-2.8 2-.8.9-1.3 1.9-1.7 3.1-.4 1.2-.6 2.4-.6 3.8 0 2.9.8 5.3 2.3 7 1.6 1.7 3.9 2.6 7 2.6 1.8 0 3.6-.4 4.9-.9 0 0 .3-.1.2-.4L166 73.5zM172.2 65.7c.2-1.1.5-2.1 1-2.8.7-1.1 1.8-1.7 3.3-1.7s2.3.6 3.1 1.7c.5.7.7 1.7.8 2.8h-8.2zm11.8-2.5c-.3-1.1-1-2.3-1.5-2.8-.8-.8-1.5-1.4-2.3-1.7-.9-.4-2.1-.7-3.3-.7-1.5 0-2.8.3-3.9.8-1.1.5-2 1.2-2.7 2.1-.7.8-1.2 1.9-1.6 3.1-.3 1.2-.5 2.4-.5 3.8s.2 2.6.5 3.8c.4 1.2.9 2.2 1.7 3 .8.9 1.8 1.5 3 2 1.2.4 2.6.7 4.3.7 3.4 0 5.3-.8 6-.2.1-.1.2-.2.1-.5l-.8-2.2c-.1-.3-.4-.2-.4-.2-.9.3-2.1.9-4.9.9-1.8 0-3.2-.5-4.1-1.5-.9-.8-1.3-2.1-1.4-3.9H184s.3 0 .3-.3c.1-.1.5-2.4-.3-5.1z"/><path fill="#fff" d="M76.8 65.7c.2-1.1.5-2.1 1-2.8.7-1.1 1.8-1.7 3.3-1.7s2.3.6 3.1 1.7c.5.7.7 1.7.8 2.8h-8.2zm11.8-2.5c-.3-1.1-1-2.3-1.5-2.8-.8-.8-1.5-1.4-2.3-1.7-1-.4-2.1-.7-3.3-.7-1.5 0-2.8.3-3.9.8-1.1.5-2 1.2-2.7 2.1-.7.8-1.2 1.9-1.6 3.1-.3 1.2-.5 2.4-.5 3.8s.2 2.6.5 3.8c.4 1.2 1 2.2 1.7 3 .8.9 1.7 1.5 2.9 2 1.2.4 2.6.7 4.3.7 3.4 0 5.2-.8 6-.2.1-.1.2-.2.1-.5l-.8-2.2c-.1-.3-.4-.2-.4-.2-.9.3-2.1.9-4.9.9-1.8 0-3.2-.5-4.1-1.5-.9-.8-1.3-2.1-1.4-3.9h11.9s.3 0 .3-.3c.1-.1.5-2.4-.3-5.1z"/><path fill="#fff" d="M51 73.4c-.5-.4-.5-.5-.6-.7-.2-.4-.3-.9-.3-1.6 0-1 .3-1.8 1.1-2.3 0 0 1-.9 3.4-.9 1.7 0 3.3.3 3.3.3v5.4s-1.5.3-3.2.4c-2.4.1-3.5-.6-3.5-.6zm4.8-8.3c-.5 0-1.1-.1-1.9-.1-.9 0-1.9.1-2.8.4-.9.2-1.7.6-2.4 1.1-.7.5-1.3 1.2-1.7 2-.4.8-.6 1.7-.6 2.8s.2 2 .5 2.7c.4.8.9 1.4 1.6 1.9.7.5 1.5.8 2.4 1 1 .2 2 .3 3.2.3 1.2 0 2.4-.1 3.6-.3 1.2-.2 2.6-.5 2.9-.6.4-.1.8-.2.8-.2.3-.1.3-.4.3-.4V64.8c0-2.4-.7-4.1-1.9-5.2-1.3-1.1-3.1-1.6-5.5-1.6-.9 0-2.3.1-3.1.3 0 0-2.6.5-3.7 1.3 0 0-.2.1-.1.5l.8 2.3c.1.3.4.2.4.2s.1 0 .2-.1c2.3-1.2 5.2-1.2 5.2-1.2 1.3 0 2.3.3 2.9.8.6.5 1 1.2 1 2.8v.5c-1-.2-1.9-.2-1.9-.2z"/><path fill="#fff" d="M151.8 58.9c.1-.3-.1-.4-.1-.4-.2-.1-1.2-.3-2-.4-1.5-.1-2.3.1-3.1.5-.7.3-1.6.9-2 1.5V58.7c0-.2-.2-.4-.4-.4h-3v17.8c0 .2.2.4.4.4h3.2c.2 0 .4-.2.4-.4V67.6c0-1.2.1-2.4.4-3.1.2-.7.6-1.3 1-1.7.4-.4.9-.7 1.4-.9.5-.2 1.1-.2 1.5-.2.6 0 1.3.2 1.3.2.2 0 .4-.1.5-.4l1.5-3.6zM122.5 50.7c-.4-.1-.7-.2-1.2-.3-.5-.1-1-.1-1.6-.1-2.1 0-3.9.6-5 1.8-1.2 1.2-2 3-2.4 5.4l-.1.8h-2.7c0 0-.3 0-.4.4l-.4 2.5c0 .2.1.4.4.4h2.6L109 76.4c-.2 1.2-.5 2.2-.7 2.9-.3.8-.5 1.3-.8 1.7-.3.4-.6.7-1 .8-.4.1-.9.2-1.4.2-.3 0-.6 0-.9-.1-.3-.1-.4-.1-.6-.2 0 0-.3-.1-.4.2l-.9 2.4c-.1.2 0 .4.1.5.4.1.6.2 1.1.3.6.2 1.2.2 1.7.2 1.1 0 2.1-.2 2.9-.5.8-.3 1.6-.8 2.2-1.6.7-.8 1.1-1.5 1.5-2.6.4-1 .7-2.4 1-4l2.7-15.1h3.9c0 0 .3 0 .4-.4l.4-2.5c0-.2-.1-.4-.4-.4h-3.8c0-.1.2-1.4.6-2.7.2-.5.5-1 .8-1.3.3-.3.6-.5 1-.6.4-.1.8-.2 1.3-.2.4 0 .7.1 1 .1.4.1.5.1.6.1.4.1.5 0 .5-.2l.9-2.5c.1-.3-.1-.4-.2-.5z"/><path fill="#fff" d="M69.3 76.5c0 .2-.2.4-.4.4h-3.2c-.2 0-.4-.2-.4-.4V51h3.6c.2 0 .4.2.4.4v25.1z"/></svg><span class="sz-cobrand-x">×</span>
+      <span style="font-family:var(--font-heading);font-size:22px;color:#fff;letter-spacing:0.04em;">METZ · CHEF2HOME</span></div>
+    <h1>Metz/Chef2Home · Health Cloud 2026</h1>
+    <p>Salesforce Professional Services &nbsp;·&nbsp; Health Cloud + MuleSoft 837P/835 &nbsp;·&nbsp; Scoping overview</p>
+    <p class="sz-topnav" style="margin-top:var(--space-md);"><a href="index.html">Overview</a><a href="scope.html">Full scope</a><a href="docs.html">Source documents</a></p>
+  </div>
+</header>
+<button class="sz-sidebar-toggle" aria-label="Open navigation" onclick="document.querySelector('.sz-sidebar').classList.add('open');document.getElementById('sz-overlay').classList.add('active');">&#9776;</button>
+<div class="sz-overlay" id="sz-overlay" onclick="document.querySelector('.sz-sidebar').classList.remove('open');document.getElementById('sz-overlay').classList.remove('active');"></div>
+<nav class="sz-sidebar" aria-label="Section navigation">
+  <div class="sz-sidebar-header"><span>Metz/Chef2Home Health Cloud</span>
+    <button class="sz-sidebar-close" aria-label="Close navigation" onclick="document.querySelector('.sz-sidebar').classList.remove('open');document.getElementById('sz-overlay').classList.remove('active');">&#215;</button></div>
+  <div class="sz-sidebar-group"><div class="sz-sidebar-label">Overview</div><a href="#overview" class="sz-sidebar-link">Executive Summary</a><a href="#phases" class="sz-sidebar-link">Delivery Plan</a><a href="#epics" class="sz-sidebar-link">Epics</a><a href="#lanes" class="sz-sidebar-link">Delivery Options</a><a href="#architecture" class="sz-sidebar-link">Design Decisions</a><a href="#open-items" class="sz-sidebar-link">Open Items</a></div><div class="sz-sidebar-group"><div class="sz-sidebar-label">More</div><a href="scope.html" class="sz-sidebar-link">Full scope →</a><a href="docs.html" class="sz-sidebar-link">Source documents →</a></div>
+</nav>
+<main class="sz-wrap">
+<section id="overview" class="sz-section"><div class="sz-section-eyebrow">Executive Summary</div><h2 class="sz-section-title">Metz/Chef2Home · Health Cloud 2026</h2><div class="sz-tldr"><div class="sz-tldr-label">Summary</div><p>Chef2Home by Metz delivers medically tailored home meals in Ohio, paid for by Medicaid waivers, MyCare plans, Area Agencies on Aging, DODD and county levies. This program adds <b>Health Cloud</b> to the Salesforce org Chef2Home already runs, for one referral-to-cash flow: referral documents arrive by email, fax and portal and become Health Cloud referrals; each client is enrolled in the Care Program for their funding source; every delivery becomes a claim line; <b>MuleSoft</b> sends 837P claims to seven clearinghouses and matches each 835 payment back to the exact delivery. The old billing system's renewal ends 31 March 2027. Metz prefers AI-native delivery: <b>26 weeks, go-live at the end of week 24</b>, conditional on five operating-model commitments.</p></div><div class="sz-stats"><div class="sz-stat"><div class="sz-stat-num">~1,400</div><div class="sz-stat-lbl">Referrals a week</div></div><div class="sz-stat"><div class="sz-stat-num">~40</div><div class="sz-stat-lbl">Funding sources</div></div><div class="sz-stat"><div class="sz-stat-num">7</div><div class="sz-stat-lbl">Clearinghouses (837P / 835)</div></div><div class="sz-stat"><div class="sz-stat-num">10</div><div class="sz-stat-lbl">Epics</div></div><div class="sz-stat"><div class="sz-stat-num">26</div><div class="sz-stat-lbl">Weeks · AI-Native (conditional)</div></div><div class="sz-stat"><div class="sz-stat-num">wk 24</div><div class="sz-stat-lbl">Go-live, then 2 wk hypercare</div></div></div><div style="margin-top:var(--space-lg);"><div class="sz-section-eyebrow" style="margin-bottom:var(--space-sm);">Capabilities in scope</div><div class="sz-chips"><span class="sz-chip">Health Cloud in the existing Chef2Home org</span><span class="sz-chip">Clients as person accounts</span><span class="sz-chip">Contact → person account conversion</span><span class="sz-chip">PHI permission set groups</span><span class="sz-chip">Intelligent Document Reader intake (email, fax, portal)</span><span class="sz-chip">Priority triage queues</span><span class="sz-chip">Care Program per funding source</span><span class="sz-chip">Coverage periods + authorizations</span><span class="sz-chip">Billing code mapping (data, not code)</span><span class="sz-chip">Claims + claim lines, one per delivery</span><span class="sz-chip">Batch review + mass rebill</span><span class="sz-chip">MuleSoft X12 837P to 7 clearinghouses</span><span class="sz-chip">835 remittance matching + history</span><span class="sz-chip">Missed-delivery alert (Salesforce notification)</span><span class="sz-chip">Audit reports + record locking</span><span class="sz-chip">Old-system migration (~13 months history)</span><span class="sz-chip">Shared release pipeline with Metz&#x27;s team</span></div></div></section><hr class="sz-divider"><section id="phases" class="sz-section"><div class="sz-section-eyebrow">Delivery Plan</div><h2 class="sz-section-title">5 phases + a parallel MuleSoft track · 26 committed weeks (AI-Native)</h2><div class="sz-timeline"><div class="sz-phase" style="background:#022AC0;"><div class="sz-phase-name">P0 · Mobilize and Align</div><div class="sz-phase-dates">Wk 1–2</div><div class="sz-phase-wks">2 wk</div></div><div class="sz-phase" style="background:#066AFE;"><div class="sz-phase-name">P1 · Foundation and Data Model</div><div class="sz-phase-dates">Wk 3–8</div><div class="sz-phase-wks">6 wk</div></div><div class="sz-phase" style="background:#0176D3;"><div class="sz-phase-name">P2 · Intake, Claims and Alerts</div><div class="sz-phase-dates">Wk 9–16</div><div class="sz-phase-wks">8 wk</div></div><div class="sz-phase" style="background:#00B3FF;"><div class="sz-phase-name">P3 · Audit, Migration and Cutover</div><div class="sz-phase-dates">Wk 17–24</div><div class="sz-phase-wks">8 wk</div></div><div class="sz-phase" style="background:#4A5578;"><div class="sz-phase-name">P4 · Hypercare</div><div class="sz-phase-dates">Wk 25–26</div><div class="sz-phase-wks">2 wk</div></div></div><p class="sz-note">Week 3 is the Health Cloud design week (data model, person-account conversion, PHI permissions, Care Programs, billing code mapping), signed off before build starts.</p><table class="sz-table"><thead><tr><th>MuleSoft track (parallel)</th><th>AI-Native wk</th><th>AI-Augmented wk</th><th>Traditional wk</th></tr></thead><tbody><tr><td><b>M1</b> Integration Design</td><td>4–5</td><td>4–6</td><td>4–6</td></tr><tr><td><b>M2</b> Integration Build</td><td>6–11</td><td>7–13</td><td>7–14</td></tr><tr><td><b>M3</b> Integration and Trading-Partner Testing</td><td>12–17</td><td>14–19</td><td>15–20</td></tr><tr><td><b>M4</b> Integration Deploy</td><td>24</td><td>27</td><td>31</td></tr></tbody></table><p class="sz-note"><b>Critical path:</b> E01 → E03 → E04 → E05 → E06. M3 trading-partner testing runs at the seven clearinghouses' pace and is held at 6 weeks in every lane; AI tooling does not shorten it.</p></section><hr class="sz-divider"><section id="epics" class="sz-section"><div class="sz-section-eyebrow">Scope</div><h2 class="sz-section-title">10 epics · 2XL + 4L + 3M + 1S</h2><table class="sz-table"><thead><tr><th>Epic</th><th>Name</th><th>Size</th><th>Confidence</th><th>Approach</th></tr></thead><tbody><tr><td><b>E01</b></td><td>Health Cloud Foundation and Org Readiness</td><td><span class="sz-tag sz-tag--sz-m">M</span></td><td><span class="sz-tag sz-tag--assumed">Assumed</span></td><td>Install Health Cloud in existing org (ADR 0001); person accounts (ADR 0002); care network; persona permission set groups; Private OWD; Service Cloud regression</td></tr><tr><td><b>E02</b></td><td>Referral Intake and Document Automation</td><td><span class="sz-tag sz-tag--sz-l">L</span></td><td><span class="sz-tag sz-tag--assumed">Assumed</span></td><td>Metz IT decrypts in O365; MuleSoft creates Received Documents per PDF; native fax; IDR extraction; Process Received Document -&gt; Clinical Service Request; priority triage queues; staged address changes</td></tr><tr><td><b>E03</b></td><td>Funding Sources, Care Programs and Authorizations</td><td><span class="sz-tag sz-tag--sz-l">L</span></td><td><span class="sz-tag sz-tag--assumed">Assumed</span></td><td>Care Program per funding source (ADR 0003); one enrollment per client-program; coverage-period child with authorization and active flag; billing mapping data object; payer rebill style config</td></tr><tr><td><b>E04</b></td><td>Claims and Billing Operations</td><td><span class="sz-tag sz-tag--sz-l">L</span></td><td><span class="sz-tag sz-tag--assumed">Assumed</span></td><td>Claims and claim lines in Health Cloud, one line per delivery; user-started batch with review; status lifecycle; mass rebill; payer claim number captured from 835</td></tr><tr><td><b>E05</b></td><td>837P Claim Submission Integration</td><td><span class="sz-tag sz-tag--sz-xl">XL</span></td><td><span class="sz-tag sz-tag--assumed">Assumed</span></td><td>Platform event on batch submit; Mule app pulls lines, applies mapping, builds 837P with X12 EDI Connector, sends per clearinghouse; line ID in line item control number; status write-back</td></tr><tr><td><b>E06</b></td><td>835 Remittance Integration</td><td><span class="sz-tag sz-tag--sz-l">L</span></td><td><span class="sz-tag sz-tag--assumed">Assumed</span></td><td>MuleSoft polls SFTP, parses 835, matches line ID, writes remittance header/lines, rolls latest status and amount paid to claim line, unmatched to review queue</td></tr><tr><td><b>E07</b></td><td>Missed-Delivery Alert</td><td><span class="sz-tag sz-tag--sz-s">S</span></td><td><span class="sz-tag sz-tag--confirmed">Confirmed</span></td><td>Driver flag in mobile app -&gt; record-triggered flow -&gt; custom notification (desktop + mobile push) to route supervisors; full-content push off</td></tr><tr><td><b>E08</b></td><td>Data Migration and Person Account Conversion</td><td><span class="sz-tag sz-tag--sz-xl">XL</span></td><td><span class="sz-tag sz-tag--unknown">Unknown</span></td><td>Rehearse in full sandbox; clean prerequisites; in-place conversion via Data Loader; load in dependency order; open-claim cutover</td></tr><tr><td><b>E09</b></td><td>Audit Reporting and Record Locking</td><td><span class="sz-tag sz-tag--sz-m">M</span></td><td><span class="sz-tag sz-tag--assumed">Assumed</span></td><td>Declarative locking, field history, standard reports; old-system audit trail archived by Metz</td></tr><tr><td><b>E10</b></td><td>Program Management, Testing and Cutover</td><td><span class="sz-tag sz-tag--sz-m">M</span></td><td><span class="sz-tag sz-tag--assumed">Assumed</span></td><td>Program management, test plan, UAT, cutover runbook, hypercare; optional change management</td></tr></tbody></table><p class="sz-note">Sizes show relative complexity (T-shirt sizes), not effort.</p></section><hr class="sz-divider"><section id="lanes" class="sz-section"><div class="sz-section-eyebrow">Delivery Options</div><h2 class="sz-section-title">Three ways to deliver it</h2><div class="sz-lanes"><div class="sz-lane sz-lane--anchor"><h3>AI-Native</h3><span class="sz-tag sz-tag--anchor">committed anchor</span> <span class="sz-tag sz-tag--conditional">conditional</span><div class="big">26 wk</div><dl><dt>Go-live</dt><dd>End of week 24, then 2 weeks of hypercare</dd><dt>How</dt><dd>Senior-weighted team directing agents; band ~19–27%</dd><dt>PS effort</dt><dd>10,560 person-hrs (+360 optional change management)</dd><dt>Team</dt><dd>13 PS people, senior-weighted · ~10.2 FTE program average</dd><dt>Confidence</dt><dd>Unknown</dd></dl></div><div class="sz-lane "><h3>AI-Augmented</h3><span class="sz-tag sz-tag--assumed">fallback if the gate fails</span><div class="big">29 wk</div><dl><dt>Go-live</dt><dd>End of week 27, then 2 weeks of hypercare</dd><dt>How</dt><dd>Same team as traditional, with AI tooling; band ~6–16%</dd><dt>PS effort</dt><dd>11,860 person-hrs (+400 optional change management)</dd><dt>Team</dt><dd>13 PS people, same team · ~10.2 FTE program average</dd><dt>Confidence</dt><dd>Assumed</dd></dl></div><div class="sz-lane "><h3>Traditional</h3><span class="sz-tag sz-tag--unknown">baseline</span><div class="big">33 wk</div><dl><dt>Go-live</dt><dd>End of week 31, then 2 weeks of hypercare</dd><dt>How</dt><dd>Standard delivery, offshore build on masked data with onshore oversight</dd><dt>PS effort</dt><dd>13,560 person-hrs (+460 optional change management)</dd><dt>Team</dt><dd>13 PS people · ~10.3 FTE program average</dd><dt>Confidence</dt><dd>Assumed</dd></dl></div></div><p class="sz-banner"><b>AI-Native is conditional.</b> Metz prefers AI-native delivery and it is the committed number, but it holds only if Metz commits to the AI-native operating model. Without it, the plan moves to AI-Augmented at 29 weeks. Qualification today:</p><ul class="sz-ms-list"><li><b>M1</b> (unknown): No product owner named yet (G0016)</li><li><b>M2</b> (unknown): Working cadence not discussed</li><li><b>M3</b> (yellow): Customer chose AI-native and accepted team requirements; sponsor unnamed (G0016)</li><li><b>M4</b> (unknown): AI tool approval for PHI not confirmed</li><li><b>M5</b> (yellow): Full sandbox ready; release pipeline unnamed (G0105), old-system data unknown (G0008)</li></ul><p class="sz-note">AI-native shortens the calendar; it does not shrink the team. Regulated patient-data QA, human-only migration on real patient data, companion-guide checks for seven clearinghouses, ~40 Care Programs of configuration and partner-paced M3 testing keep the same 13 roles. Client target 29 January 2027 is not reachable on any lane (G1007).</p><p class="sz-disclaimer">This figure is benchmark-based, derived from the AI model's training data and general delivery patterns (not Salesforce-validated) — not a commitment. Final figures are confirmed through the applicable commercial agreement.</p><p class="sz-disclaimer">The AI-native band is provisional until AI-native delivery actuals accumulate. The lane is conditional on the M1–M5 operating-model commitments above.</p></section><hr class="sz-divider"><section id="architecture" class="sz-section"><div class="sz-section-eyebrow">Architecture</div><h2 class="sz-section-title">Foundation decisions</h2><table class="sz-table"><thead><tr><th>Decision</th><th>Status</th><th>Source</th></tr></thead><tbody><tr><td>0001 — Health Cloud is built into the existing Chef2Home production Salesforce org</td><td>accepted</td><td>client-supplied</td></tr><tr><td>0002 — Chef2Home clients are modeled as person accounts</td><td>accepted</td><td>scopezilla-recommended</td></tr><tr><td>0003 — Each funding source is a Care Program; coverage periods are child records of a single enrollment</td><td>accepted</td><td>scopezilla-recommended</td></tr></tbody></table></section><hr class="sz-divider"><section id="open-items" class="sz-section"><div class="sz-section-eyebrow">Open Items</div><h2 class="sz-section-title">Decisions on the critical path</h2><table class="sz-table"><thead><tr><th>ID</th><th>Category</th><th>Question / risk</th></tr></thead><tbody><tr><td>G1007</td><td>Logical Gap</td><td>Go/no-go criteria and fallback. Billing is to be live on 1/29/27, but the first deliveries start 2/1/27 and the first billing run is the first week of March. The old system can run until 3/31/27. (a) What are the go/no-go criteria for 1/29, and when is the last go/no-go date? (b) If one clearinghouse or payer isn&#x27;t certified by go-live, does its billing stay in the old system until it passes, while the others go live? (c) Is splitting acceptable: intake, client and funding-source go live on 1/29, with the billing go/no-go moving to just before the first March run? (d) If the March run fails, what&#x27;s the fallback? After 3/31 the old system no longer exists, and nobody has said whether its end date can move.</td></tr><tr><td>G0001</td><td>Missing Requirement</td><td>837 claims: will claims go to a clearinghouse (e.g., Availity, Waystar) or directly to each payer? Which clearinghouse, if any, is already contracted?</td></tr><tr><td>G0008</td><td>Missing Requirement</td><td>Data migration: what is the &#x27;old system&#x27; whose renewal ends 3/31/27? What record counts are there for active clients, funding sources and authorizations, open referrals, and delivery and claim history? How many years of delivery history are needed?</td></tr><tr><td>G0401</td><td>Ambiguity</td><td>Direction is &#x27;billing is by delivery: one claim line per delivery.&#x27; The questionnaire says some funding sources must be billed by meals per day (1 or 2) instead of 14 meals at delivery, and others need the bill broken out by rules. For a per-day payer, should one delivery become one line with a date span and units = meals, one line per service day (several lines per delivery), or something else? Which payers need which shape, and what do the current saved 837s show?</td></tr><tr><td>G0012</td><td>Missing Requirement</td><td>Audit and record locking: at what point do records become non-editable (e.g., after delivery confirmation or claim submission), and which objects? What do annual audit reports need (deliveries, signatures, geotag, timestamps, authorizations)?</td></tr><tr><td>G0015</td><td>Missing Requirement</td><td>HIPAA and security: does Metz need Shield (encryption and event monitoring), field-level security for protected health information, or a specific audit-trail retention beyond field history?</td></tr><tr><td>G0105</td><td>Missing Requirement</td><td>How will environments and releases work? Salesforce PS builds Health Cloud in the new full sandbox while Metz&#x27;s internal team keeps changing the delivery and scheduling objects in the same org (and possibly the same sandbox). Who owns the deployment pipeline (source control, change sets or CLI-based deploys), the release calendar and sandbox refreshes? When is person accounts turned on in production relative to the deploy?</td></tr><tr><td>G0305</td><td>Logical Gap</td><td>The client&#x27;s custom Funding Source object &#x27;likely already exists&#x27; and is related to Contact. ADR 0003 adds Care Program + enrollment + coverage period on person accounts. (a) Does the existing object become the coverage-period child (re-parented under the enrollment, keeping its links to the scheduling objects), or is it replaced by a new object and retired? (b) Do existing records hold several rows per client per funding source (repeat stints), which must be collapsed into one enrollment with N coverage periods? (c) Is the object in production use today, and which flows, reports and scheduling objects reference it?</td></tr><tr><td>G0016</td><td>Missing Requirement</td><td>Client internal team: who builds and owns the delivery scheduling and meal rotation changes (out of PS scope), and what capacity do they have to deliver the Funding Source/Care Program touchpoints in parallel by 1/29/27?</td></tr><tr><td>G0021</td><td>Assumption</td><td>Offshore build, QA and MuleSoft development work only in masked sandboxes on masked or synthetic data. Onshore staff own everything that touches real PHI: migration loads, production cutover, production credentials and UAT data.</td></tr><tr><td>G0819</td><td>Assumption</td><td>Working assumptions for migration scope; please confirm or correct: (1) Metz provides old-system extracts as flat files with a field dictionary. (2) Metz owns data cleansing and business mapping decisions; PS owns transformation, load scripts and reconciliation reports. (3) Only active clients, all their funding-source and authorization history, open referrals, and 13 months of delivery and claim history migrate. (4) Migrated history is read-only. (5) Historical 837 and 835 files are archived, not parsed into Salesforce. (6) Two mock loads plus one production load are planned.</td></tr><tr><td>G0515</td><td>Assumption</td><td>Assumption: the MuleSoft X12 EDI Connector 837P/835 schemas plus per-payer overrides cover the companion guides of the payers behind the 7 clearinghouses, with no custom EDI parsing.</td></tr></tbody></table><p class="sz-note">12 of 138 logged items shown. See the <a href="scope.html#gaps">full list</a>.</p></section>
+<hr class="sz-divider">
+<p class="sz-note">Generated from the Scopezilla project data · November 2026 · Salesforce Professional Services · Internal scoping — pricing not included (pricing deferred).</p>
+</main>
+<script>
+document.querySelectorAll('.sz-sidebar-link').forEach(function(a){a.addEventListener('click',function(){document.querySelector('.sz-sidebar').classList.remove('open');document.getElementById('sz-overlay').classList.remove('active');});});
+document.querySelectorAll('.sz-filter').forEach(function(f){
+  var tbl=document.getElementById(f.dataset.table);
+  f.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){
+    f.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');
+    tbl.querySelectorAll('tbody tr').forEach(function(tr){tr.style.display=(b.dataset.cat==='all'||tr.dataset.cat===b.dataset.cat)?'':'none';});
+  });});
+});
+</script>
+</body>
+</html>

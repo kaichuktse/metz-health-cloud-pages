@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metz/Chef2Home · Source Documents</title>
+<style>
+  :root {
+    --sf-navy:        #001E5B;
+    --sf-type:        #002775;
+    --sf-container:   #022AC0;
+    --sf-blue:        #066AFE;
+    --sf-cloud:       #00B3FF;
+    --sf-cloud-80:    #90D0FE;
+    --sf-bg:          #CFE9FE;
+    --sf-light-bg:    #EAF5FE;
+    --sf-text:        #002775;
+    --sf-text-weak:   #4A5578;
+    --ext-teal:       #06A59A;  --ext-teal-80: #04E1CB;  --ext-teal-95:   #DEF9F3;
+    --ext-yellow:     #FCC003;  --ext-yellow-70: #E4A201; --ext-yellow-95: #FBF3E0;
+    --ext-pink:       #FF538A;  --ext-pink-40: #B60554;  --ext-pink-95:   #FEF0F3;
+    --ext-violet:     #D17DFE;  --ext-violet-30: #730394; --ext-violet-95: #F9F0FF;
+    --sf-ok:      #2E844A;  --sf-ok-bg:      #EAFCE9;
+    --sf-warn:    #DD7A01;  --sf-warn-bg:    #FFF7E6;
+    --sf-bad:     #BA0517;  --sf-bad-bg:     #FDECEB;
+    --sf-neutral: #94A3B3;  --sf-neutral-bg: #F3F6FA;
+    --client-primary: #E45B10;
+    --client-dark:    #B8480C;
+    --font-heading: 'ITC Avant Garde Gothic Demi','Avant Garde','Century Gothic','Salesforce Sans','Source Sans 3',Arial,sans-serif;
+    --font-body:    'Salesforce Sans','Source Sans 3','Helvetica Neue',Arial,sans-serif;
+    --fs-title:54px; --fs-subtitle:36px; --fs-l1:30px; --fs-cat:26px;
+    --fs-l2:24px; --fs-desc:22px; --fs-body:16px;
+    --space-xs:4px; --space-sm:8px; --space-md:16px;
+    --space-lg:24px; --space-xl:32px; --space-2xl:48px;
+    --radius-sm:4px; --radius-md:8px; --radius-lg:16px;
+    --shadow-brand:2.6px 9.7px 25px rgba(6,106,254,0.15);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font-body);color:var(--sf-text);background:var(--sf-light-bg);-webkit-font-smoothing:antialiased;line-height:1.55;}
+  h1,h2,h3,.sz-stat-num{font-family:var(--font-heading);color:var(--sf-navy);line-height:1.15;}
+  a{color:var(--sf-blue);}
+  :focus-visible{outline:3px solid var(--sf-blue);outline-offset:2px;border-radius:2px;}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
+  .sz-section{margin:var(--space-2xl) 0;}
+  .sz-section-eyebrow{font-family:var(--font-heading);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sf-blue);margin-bottom:var(--space-xs);}
+  .sz-section-title{font-size:var(--fs-cat);margin-bottom:var(--space-md);}
+  .sz-card{background:#fff;border-radius:var(--radius-md);padding:var(--space-lg);box-shadow:var(--shadow-brand);}
+  .sz-card+.sz-card{margin-top:var(--space-md);}
+  .sz-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--space-md);}
+  .sz-stat{background:#fff;border-radius:var(--radius-md);padding:var(--space-lg) var(--space-md);text-align:center;box-shadow:var(--shadow-brand);}
+  .sz-stat-num{font-size:42px;color:var(--client-primary);}
+  .sz-stat-lbl{font-size:13px;color:var(--sf-text-weak);margin-top:var(--space-xs);}
+  .sz-table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-brand);}
+  .sz-table th{background:var(--sf-container);color:#fff;font-family:var(--font-heading);text-align:left;padding:var(--space-sm) var(--space-md);font-size:14px;}
+  .sz-table td{padding:var(--space-sm) var(--space-md);border-top:1px solid var(--sf-light-bg);font-size:14px;vertical-align:top;}
+  .sz-table tbody tr:nth-child(even){background:var(--sf-light-bg);}
+  .sz-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;line-height:1.6;}
+  .sz-tag--critical{background:var(--ext-pink-95);color:var(--ext-pink-40);}
+  .sz-tag--high{background:var(--ext-yellow-95);color:var(--ext-yellow-70);}
+  .sz-tag--medium{background:var(--ext-yellow-95);color:var(--ext-yellow-70);}
+  .sz-tag--low{background:var(--ext-teal-95);color:var(--ext-teal);}
+  .sz-tag--info{background:var(--sf-light-bg);color:var(--sf-blue);}
+  .sz-tag--sz-s{background:var(--sf-light-bg);color:var(--sf-blue);}
+  .sz-tag--sz-m{background:#DCEBFF;color:var(--sf-blue);}
+  .sz-tag--sz-l{background:var(--sf-cloud);color:var(--sf-navy);}
+  .sz-tag--sz-xl{background:var(--sf-container);color:#fff;}
+  .sz-tag--ps{background:#F3F0FF;color:#5B21B6;}
+  .sz-tag--wsi{background:#F0FDF4;color:#15803D;}
+  .sz-tag--unknown{background:var(--sf-neutral-bg);color:var(--sf-neutral);}
+  .sz-tag--assumed{background:var(--ext-yellow-95);color:var(--ext-yellow-70);}
+  .sz-tldr{background:var(--sf-light-bg);border-left:4px solid var(--sf-blue);border-radius:var(--radius-sm);padding:var(--space-md) var(--space-lg);margin:var(--space-lg) 0;}
+  .sz-tldr-label{font-family:var(--font-heading);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--sf-blue);margin-bottom:var(--space-xs);}
+  .sz-timeline{display:flex;gap:2px;border-radius:var(--radius-sm);overflow:hidden;box-shadow:var(--shadow-brand);}
+  .sz-phase{flex:1;padding:var(--space-md);color:#fff;text-align:center;font-size:14px;}
+  .sz-phase:nth-child(1){background:var(--sf-navy);}
+  .sz-phase:nth-child(2){background:var(--sf-container);}
+  .sz-phase:nth-child(3){background:var(--sf-blue);}
+  .sz-phase-name{font-family:var(--font-heading);font-size:15px;}
+  .sz-phase-wks{opacity:.85;font-size:12px;margin-top:2px;}
+  .sz-phase-dates{opacity:.75;font-size:11px;margin-top:2px;}
+  .sz-chips{display:flex;flex-wrap:wrap;gap:var(--space-xs);}
+  .sz-chip{background:var(--sf-light-bg);color:var(--sf-container);border:1px solid var(--sf-cloud-80);border-radius:999px;padding:4px 12px;font-size:13px;}
+  .sz-cta{display:inline-block;background:var(--sf-blue);color:#fff;font-family:var(--font-heading);text-decoration:none;padding:var(--space-sm) var(--space-lg);border-radius:999px;box-shadow:var(--shadow-brand);border:none;cursor:pointer;}
+  .sz-panorama{position:relative;padding:var(--space-2xl) var(--space-xl);text-align:center;border-radius:var(--radius-lg);box-shadow:var(--shadow-brand);overflow:hidden;}
+  .sz-panorama--navy{background:linear-gradient(135deg,var(--sf-navy),var(--sf-container));color:#fff;}
+  .sz-panorama h2{color:inherit;font-size:var(--fs-l1);}
+  .sz-panorama p{color:rgba(255,255,255,.8);margin-top:var(--space-sm);}
+  .shot-btn{position:absolute;top:14px;right:16px;font-size:11px;font-weight:600;color:var(--sf-blue);background:#fff;border:1px solid var(--sf-cloud-80);border-radius:5px;padding:4px 9px;cursor:pointer;z-index:2;}
+  .shot-btn:hover{background:var(--sf-light-bg);}
+  [data-shot]{background:#fff;position:relative;}
+  @media print{.shot-btn,.sz-export{display:none;}}
+  .sz-wrap{max-width:980px;margin:0 auto;padding:var(--space-2xl) var(--space-lg);}
+  .sz-hero{background:linear-gradient(135deg,var(--sf-container),var(--sf-blue));color:#fff;padding:var(--space-2xl) var(--space-lg);}
+  .sz-hero h1{color:#fff;font-size:var(--fs-subtitle);max-width:700px;}
+  .sz-hero p{color:var(--sf-cloud-80);margin-top:var(--space-sm);font-size:16px;}
+  .sz-cobrand{display:flex;align-items:center;gap:var(--space-md);margin-bottom:var(--space-lg);}
+  .sz-cobrand svg{height:30px;width:auto;}
+  .sz-cobrand-x{color:var(--sf-cloud-80);font-size:18px;}
+  .sz-sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:#fff;border-right:1px solid var(--sf-cloud-80);overflow-y:auto;z-index:200;display:flex;flex-direction:column;padding-bottom:var(--space-lg);transform:translateX(-100%);transition:transform .22s ease;box-shadow:4px 0 20px rgba(0,30,91,.12);}
+  .sz-sidebar.open{transform:translateX(0);}
+  .sz-sidebar-header{padding:var(--space-md) var(--space-md) var(--space-sm);display:flex;align-items:center;justify-content:space-between;font-family:var(--font-heading);font-size:13px;font-weight:700;color:var(--sf-navy);border-bottom:1px solid var(--sf-cloud-80);letter-spacing:.04em;}
+  .sz-sidebar-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--sf-text-weak);line-height:1;padding:0;}
+  .sz-sidebar-close:hover{color:var(--sf-navy);}
+  .sz-sidebar-group{padding:var(--space-sm) 0;border-bottom:1px solid var(--sf-light-bg);}
+  .sz-sidebar-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sf-text-weak);padding:var(--space-sm) var(--space-md) 4px;}
+  .sz-sidebar-link{display:block;padding:6px var(--space-md);font-size:13px;text-decoration:none;color:var(--sf-container);border-left:3px solid transparent;line-height:1.3;}
+  .sz-sidebar-link:hover{background:var(--sf-light-bg);color:var(--sf-navy);}
+  .sz-sidebar-link.active{background:var(--sf-light-bg);border-left-color:var(--client-primary);color:var(--sf-navy);font-weight:600;}
+  .sz-sidebar-footer{margin-top:auto;padding:var(--space-md);}
+  .sz-sources-btn{display:block;text-align:center;font-size:12px;font-weight:700;padding:5px 14px;border-radius:4px;background:var(--sf-blue);color:#fff !important;text-decoration:none !important;letter-spacing:.02em;}
+  .sz-sources-btn:hover{background:var(--sf-container);}
+  .sz-sidebar-toggle{display:flex;position:fixed;top:14px;left:14px;z-index:300;background:var(--sf-navy);color:#fff;border:none;border-radius:6px;width:36px;height:36px;font-size:18px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,30,91,.25);}
+  .sz-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:199;}
+  .sz-overlay.active{display:block;}
+  .sz-export{text-align:center;margin:var(--space-2xl) 0 var(--space-lg);}
+  html{scroll-behavior:smooth;}
+  section{scroll-margin-top:16px;}
+  .sz-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-md);}
+  .sz-risk-row td:first-child{font-weight:600;}
+  .sz-legend{display:flex;flex-wrap:wrap;gap:var(--space-sm);margin-top:var(--space-md);align-items:center;font-size:13px;color:var(--sf-text-weak);}
+  .sz-divider{border:none;border-top:1px solid var(--sf-cloud-80);margin:var(--space-2xl) 0;}
+  @media(max-width:720px){.sz-grid-2{grid-template-columns:1fr;}.sz-timeline{flex-direction:column;}.sz-stats{grid-template-columns:repeat(2,1fr);}}
+</style>
+
+<style>
+  :root{--client-primary:#022AC0;}
+  .sz-stats{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));}
+  .sz-stat-num{white-space:nowrap;font-size:34px;}
+  .sz-tag--confirmed{background:var(--sf-ok-bg);color:var(--sf-ok);}
+  .sz-tag--conditional{background:var(--ext-violet-95);color:var(--ext-violet-30);}
+  .sz-tag--anchor{background:var(--sf-ok-bg);color:var(--sf-ok);}
+  .sz-note{font-size:13px;color:var(--sf-text-weak);margin:var(--space-sm) 0 var(--space-md);}
+  .sz-disclaimer{font-size:12px;font-style:italic;color:var(--sf-text-weak);border-left:3px solid var(--sf-cloud-80);padding:4px 12px;margin:var(--space-md) 0;}
+  .sz-banner{background:var(--sf-warn-bg);border-left:4px solid var(--sf-warn);padding:var(--space-sm) var(--space-md);border-radius:var(--radius-sm);font-size:13px;margin:var(--space-md) 0;}
+  .sz-lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-md);}
+  .sz-lane{background:#fff;border-radius:var(--radius-md);padding:var(--space-lg);box-shadow:var(--shadow-brand);border-top:4px solid var(--sf-neutral);}
+  .sz-lane--anchor{border-top-color:var(--ext-violet);border-top-style:dashed;}
+  .sz-lane h3{font-size:18px;margin-bottom:4px;}
+  .sz-lane .big{font-family:var(--font-heading);font-size:30px;color:var(--client-primary);margin:var(--space-sm) 0 0;}
+  .sz-lane dl{font-size:13px;margin-top:var(--space-sm);}
+  .sz-lane dt{color:var(--sf-text-weak);margin-top:6px;}
+  .sz-lane dd{font-weight:600;}
+  .sz-ms-list{font-size:13px;margin:var(--space-sm) 0 0 18px;}
+  .num{text-align:right;white-space:nowrap;}
+  tr.sz-total td{font-weight:700;background:#DCEBFF!important;}
+  tr.sz-opt td{color:var(--sf-text-weak);font-style:italic;}
+  .g-wrap{background:#fff;border-radius:var(--radius-md);box-shadow:var(--shadow-brand);padding:var(--space-md) var(--space-md) 30px;overflow-x:auto;margin-bottom:var(--space-md);}
+  .g-row{display:flex;align-items:center;min-height:26px;}
+  .g-sep{min-height:8px;border-bottom:1px solid var(--sf-light-bg);margin-bottom:4px;}
+  .g-lbl{flex:0 0 300px;font-size:12px;padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .g-track{position:relative;flex:1;height:22px;min-width:560px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/var(--cols,26) - 1px),var(--sf-light-bg) calc(100%/var(--cols,26) - 1px),var(--sf-light-bg) calc(100%/var(--cols,26)));}
+  .g-ticks{background:none;height:18px;}
+  .g-ticks span{position:absolute;transform:translateX(-50%);font-size:10px;color:var(--sf-text-weak);}
+  .g-bar{position:absolute;top:3px;height:16px;border-radius:3px;background:var(--sf-blue);color:#fff;font-size:10px;line-height:16px;text-align:center;overflow:hidden;}
+  .g-bar--phase{background:var(--sf-container);}
+  .g-bar--mule{background:#06A59A;}
+  .g-bar--ramp{background:repeating-linear-gradient(45deg,var(--ext-yellow-70),var(--ext-yellow-70) 6px,var(--ext-yellow) 6px,var(--ext-yellow) 12px);color:var(--sf-navy);}
+  .g-bar--care{background:var(--sf-text-weak);}
+  .g-body{position:relative;}
+  .g-ms-layer{position:absolute;top:0;bottom:0;left:300px;right:0;pointer-events:none;}
+  .g-ms{position:absolute;top:0;bottom:0;border-left:2px dashed var(--client-primary);}
+  .g-ms span{position:absolute;bottom:-18px;left:-4px;font-size:10px;font-weight:700;color:var(--client-primary);white-space:nowrap;}
+  .g-legend{font-size:12px;color:var(--sf-text-weak);margin-top:8px;}
+  .sz-filter button{font-size:12px;border:1px solid var(--sf-cloud-80);background:#fff;color:var(--sf-container);border-radius:999px;padding:3px 10px;margin:0 4px 6px 0;cursor:pointer;}
+  .sz-filter button.on{background:var(--sf-container);color:#fff;}
+  .sz-doc h1{font-size:26px;margin:var(--space-lg) 0 var(--space-sm);}
+  .sz-doc h2{font-size:20px;margin:var(--space-lg) 0 var(--space-sm);}
+  .sz-doc h3{font-size:16px;margin:var(--space-md) 0 var(--space-xs);}
+  .sz-doc p,.sz-doc li{font-size:14px;margin-bottom:6px;}
+  .sz-doc ul,.sz-doc ol{padding-left:22px;margin-bottom:var(--space-sm);}
+  .sz-doc table{width:100%;border-collapse:collapse;margin:var(--space-sm) 0 var(--space-md);font-size:13px;background:#fff;}
+  .sz-doc th{background:var(--sf-container);color:#fff;text-align:left;padding:6px 10px;}
+  .sz-doc td{padding:6px 10px;border-top:1px solid var(--sf-light-bg);vertical-align:top;}
+  .sz-doc blockquote{border-left:3px solid var(--sf-cloud-80);padding:4px 12px;color:var(--sf-text-weak);margin:var(--space-sm) 0;}
+  .sz-doc code{font-size:12px;background:var(--sf-light-bg);padding:1px 4px;border-radius:3px;}
+  .sz-topnav a{color:#fff;margin-right:var(--space-md);font-size:14px;}
+  @media(max-width:860px){.sz-lanes{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header class="sz-hero">
+  <div class="sz-wrap" style="padding-top:0;padding-bottom:0;">
+    <div class="sz-cobrand"><svg role="img" aria-label="Salesforce" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 205.735 144"><g><path fill-rule="nonzero" fill="rgb(17.7%,62%,87.5%)" d="M85.5 15.8C92.1 8.9 101.4 4.6 111.6 4.6c13.6 0 25.4 7.6 31.7 18.8 5.5-2.4 11.6-3.8 17.9-3.8 24.5 0 44.3 20 44.3 44.7s-19.8 44.7-44.3 44.7c-3 0-5.9-.3-8.7-.9-5.5 9.9-16.1 16.6-28.2 16.6-5.1 0-9.9-1.2-14.2-3.3C104.4 134.6 91.3 143.9 76 143.9c-15.3 0-29.5-10.1-34.7-24.2-2.3.5-4.6.7-7 .7C15.4 120.5 0 105 0 85.8c0-12.8 6.9-24 17.1-30-2.1-4.9-3.2-10.2-3.2-15.9C13.9 17.9 31.7.1 53.8.1c12.9 0 24.4 6.1 31.7 15.7"/></g><path fill="#fff" d="M29.8 74.7c-.1.3.1.4.1.4.4.3.8.5 1.2.7 2.1 1.1 4.1 1.4 6.1 1.4 4.2 0 6.8-2.2 6.8-5.8v-.1c0-3.3-2.9-4.6-5.7-5.4l-.4-.1c-2.1-.7-3.9-1.3-3.9-2.6v-.1c0-1.2 1.1-2.1 2.7-2.1 1.8 0 4 .6 5.4 1.4 0 0 .4.3.5-.1.1-.2.8-2.1.8-2.3.1-.2 0-.4-.1-.5-1.6-1-3.8-1.6-6-1.6h-.4c-3.9 0-6.5 2.3-6.5 5.7v.1c0 3.5 3 4.6 5.8 5.4l.4.1c2 .6 3.8 1.1 3.8 2.6v.1c0 1.3-1.1 2.3-2.9 2.3-.7 0-3-.1-5.4-1.6-.3-.2-.5-.3-.7-.4-.1-.1-.4-.2-.5.2l-.8 2.3zM91.5 74.7c-.1.3.1.4.1.4.4.3.8.5 1.2.7 2.1 1.1 4.1 1.4 6.1 1.4 4.2 0 6.8-2.2 6.8-5.8v-.1c0-3.3-2.9-4.6-5.7-5.4l-.4-.1c-2.1-.7-3.9-1.3-3.9-2.6v-.1c0-1.2 1.1-2.1 2.7-2.1 1.8 0 4 .6 5.4 1.4 0 0 .4.3.5-.1.1-.2.8-2.1.8-2.3.1-.2 0-.4-.1-.5-1.6-1-3.8-1.6-6-1.6h-.4c-3.9 0-6.5 2.3-6.5 5.7v.1c0 3.5 3 4.6 5.8 5.4l.4.1c2 .6 3.8 1.1 3.8 2.6v.1c0 1.3-1.1 2.3-2.9 2.3-.7 0-3-.1-5.4-1.6-.3-.2-.5-.3-.7-.4-.1-.1-.4-.2-.5.2l-.8 2.3zM133.6 67.6c0 2-.4 3.6-1.1 4.8-.7 1.1-1.9 1.7-3.5 1.7s-2.7-.5-3.4-1.7c-.7-1.1-1.1-2.8-1.1-4.8s.4-3.6 1.1-4.8c.7-1.1 1.9-1.7 3.4-1.7s1.7.5 2.5 1.7c.7 1.1 1.1 2.8 1.1 4.8m3.5-3.8c-.3-1.2-.9-2.2-1.6-3.1-.7-.9-1.6-1.6-2.7-2.1-1.1-.5-2.3-.8-3.7-.8s-2.7.3-3.8.8c-1.1.5-2 1.2-2.7 2.1-.7.9-1.2 1.9-1.6 3.1-.3 1.2-.5 2.4-.5 3.8s.2 2.6.5 3.8c.3 1.2.9 2.2 1.6 3.1.7.9 1.6 1.6 2.7 2.1 1.1.5 2.3.8 3.8.8s2.7-.3 3.7-.8c1.1-.5 2-1.2 2.7-2.1.7-.9 1.2-1.9 1.6-3.1.3-1.2.5-2.4.5-3.8s-.2-2.6-.5-3.8M166 73.5c-.1-.3-.5-.2-.5-.2-.5.2-1.1.4-1.6.5-.6.1-1.2.1-1.9.1-1.7 0-3.1-.5-4.1-1.5-1-.9-1.5-2.6-1.5-4.8 0-2 .5-3.5 1.4-4.6.9-1.1 2.2-1.7 3.9-1.7 1.4 0 2.5.2 3.7.6 0 0 .3.1.4-.3.3-.9.5-1.5.8-2.4.1-.3-.1-.4-.2-.4-.5-.2-1.5-.5-2.4-.6-.8-.1-1.6-.2-2.6-.2-1.5 0-2.8.2-3.9.7-1.1.5-2.1 1.2-2.8 2-.8.9-1.3 1.9-1.7 3.1-.4 1.2-.6 2.4-.6 3.8 0 2.9.8 5.3 2.3 7 1.6 1.7 3.9 2.6 7 2.6 1.8 0 3.6-.4 4.9-.9 0 0 .3-.1.2-.4L166 73.5zM172.2 65.7c.2-1.1.5-2.1 1-2.8.7-1.1 1.8-1.7 3.3-1.7s2.3.6 3.1 1.7c.5.7.7 1.7.8 2.8h-8.2zm11.8-2.5c-.3-1.1-1-2.3-1.5-2.8-.8-.8-1.5-1.4-2.3-1.7-.9-.4-2.1-.7-3.3-.7-1.5 0-2.8.3-3.9.8-1.1.5-2 1.2-2.7 2.1-.7.8-1.2 1.9-1.6 3.1-.3 1.2-.5 2.4-.5 3.8s.2 2.6.5 3.8c.4 1.2.9 2.2 1.7 3 .8.9 1.8 1.5 3 2 1.2.4 2.6.7 4.3.7 3.4 0 5.3-.8 6-.2.1-.1.2-.2.1-.5l-.8-2.2c-.1-.3-.4-.2-.4-.2-.9.3-2.1.9-4.9.9-1.8 0-3.2-.5-4.1-1.5-.9-.8-1.3-2.1-1.4-3.9H184s.3 0 .3-.3c.1-.1.5-2.4-.3-5.1z"/><path fill="#fff" d="M76.8 65.7c.2-1.1.5-2.1 1-2.8.7-1.1 1.8-1.7 3.3-1.7s2.3.6 3.1 1.7c.5.7.7 1.7.8 2.8h-8.2zm11.8-2.5c-.3-1.1-1-2.3-1.5-2.8-.8-.8-1.5-1.4-2.3-1.7-1-.4-2.1-.7-3.3-.7-1.5 0-2.8.3-3.9.8-1.1.5-2 1.2-2.7 2.1-.7.8-1.2 1.9-1.6 3.1-.3 1.2-.5 2.4-.5 3.8s.2 2.6.5 3.8c.4 1.2 1 2.2 1.7 3 .8.9 1.7 1.5 2.9 2 1.2.4 2.6.7 4.3.7 3.4 0 5.2-.8 6-.2.1-.1.2-.2.1-.5l-.8-2.2c-.1-.3-.4-.2-.4-.2-.9.3-2.1.9-4.9.9-1.8 0-3.2-.5-4.1-1.5-.9-.8-1.3-2.1-1.4-3.9h11.9s.3 0 .3-.3c.1-.1.5-2.4-.3-5.1z"/><path fill="#fff" d="M51 73.4c-.5-.4-.5-.5-.6-.7-.2-.4-.3-.9-.3-1.6 0-1 .3-1.8 1.1-2.3 0 0 1-.9 3.4-.9 1.7 0 3.3.3 3.3.3v5.4s-1.5.3-3.2.4c-2.4.1-3.5-.6-3.5-.6zm4.8-8.3c-.5 0-1.1-.1-1.9-.1-.9 0-1.9.1-2.8.4-.9.2-1.7.6-2.4 1.1-.7.5-1.3 1.2-1.7 2-.4.8-.6 1.7-.6 2.8s.2 2 .5 2.7c.4.8.9 1.4 1.6 1.9.7.5 1.5.8 2.4 1 1 .2 2 .3 3.2.3 1.2 0 2.4-.1 3.6-.3 1.2-.2 2.6-.5 2.9-.6.4-.1.8-.2.8-.2.3-.1.3-.4.3-.4V64.8c0-2.4-.7-4.1-1.9-5.2-1.3-1.1-3.1-1.6-5.5-1.6-.9 0-2.3.1-3.1.3 0 0-2.6.5-3.7 1.3 0 0-.2.1-.1.5l.8 2.3c.1.3.4.2.4.2s.1 0 .2-.1c2.3-1.2 5.2-1.2 5.2-1.2 1.3 0 2.3.3 2.9.8.6.5 1 1.2 1 2.8v.5c-1-.2-1.9-.2-1.9-.2z"/><path fill="#fff" d="M151.8 58.9c.1-.3-.1-.4-.1-.4-.2-.1-1.2-.3-2-.4-1.5-.1-2.3.1-3.1.5-.7.3-1.6.9-2 1.5V58.7c0-.2-.2-.4-.4-.4h-3v17.8c0 .2.2.4.4.4h3.2c.2 0 .4-.2.4-.4V67.6c0-1.2.1-2.4.4-3.1.2-.7.6-1.3 1-1.7.4-.4.9-.7 1.4-.9.5-.2 1.1-.2 1.5-.2.6 0 1.3.2 1.3.2.2 0 .4-.1.5-.4l1.5-3.6zM122.5 50.7c-.4-.1-.7-.2-1.2-.3-.5-.1-1-.1-1.6-.1-2.1 0-3.9.6-5 1.8-1.2 1.2-2 3-2.4 5.4l-.1.8h-2.7c0 0-.3 0-.4.4l-.4 2.5c0 .2.1.4.4.4h2.6L109 76.4c-.2 1.2-.5 2.2-.7 2.9-.3.8-.5 1.3-.8 1.7-.3.4-.6.7-1 .8-.4.1-.9.2-1.4.2-.3 0-.6 0-.9-.1-.3-.1-.4-.1-.6-.2 0 0-.3-.1-.4.2l-.9 2.4c-.1.2 0 .4.1.5.4.1.6.2 1.1.3.6.2 1.2.2 1.7.2 1.1 0 2.1-.2 2.9-.5.8-.3 1.6-.8 2.2-1.6.7-.8 1.1-1.5 1.5-2.6.4-1 .7-2.4 1-4l2.7-15.1h3.9c0 0 .3 0 .4-.4l.4-2.5c0-.2-.1-.4-.4-.4h-3.8c0-.1.2-1.4.6-2.7.2-.5.5-1 .8-1.3.3-.3.6-.5 1-.6.4-.1.8-.2 1.3-.2.4 0 .7.1 1 .1.4.1.5.1.6.1.4.1.5 0 .5-.2l.9-2.5c.1-.3-.1-.4-.2-.5z"/><path fill="#fff" d="M69.3 76.5c0 .2-.2.4-.4.4h-3.2c-.2 0-.4-.2-.4-.4V51h3.6c.2 0 .4.2.4.4v25.1z"/></svg><span class="sz-cobrand-x">×</span>
+      <span style="font-family:var(--font-heading);font-size:22px;color:#fff;letter-spacing:0.04em;">METZ · CHEF2HOME</span></div>
+    <h1>Metz/Chef2Home · Source Documents</h1>
+    <p>The Scopezilla working documents behind the scope, each labelled with its as-of date</p>
+    <p class="sz-topnav" style="margin-top:var(--space-md);"><a href="index.html">Overview</a><a href="scope.html">Full scope</a><a href="docs.html">Source documents</a></p>
+  </div>
+</header>
+<button class="sz-sidebar-toggle" aria-label="Open navigation" onclick="document.querySelector('.sz-sidebar').classList.add('open');document.getElementById('sz-overlay').classList.add('active');">&#9776;</button>
+<div class="sz-overlay" id="sz-overlay" onclick="document.querySelector('.sz-sidebar').classList.remove('open');document.getElementById('sz-overlay').classList.remove('active');"></div>
+<nav class="sz-sidebar" aria-label="Section navigation">
+  <div class="sz-sidebar-header"><span>Metz/Chef2Home Health Cloud</span>
+    <button class="sz-sidebar-close" aria-label="Close navigation" onclick="document.querySelector('.sz-sidebar').classList.remove('open');document.getElementById('sz-overlay').classList.remove('active');">&#215;</button></div>
+  <div class="sz-sidebar-group"><div class="sz-sidebar-label">Documents</div><a href="#discovery" class="sz-sidebar-link">Discovery Brief</a><a href="#solution" class="sz-sidebar-link">Solution Architecture</a><a href="#delivery" class="sz-sidebar-link">Delivery Plan</a><a href="#estimate" class="sz-sidebar-link">Estimate Comparison (internal)</a><a href="#efficiency" class="sz-sidebar-link">AI Efficiency Analysis</a><a href="#adrs" class="sz-sidebar-link">Architecture Decisions (ADRs)</a></div><div class="sz-sidebar-group"><div class="sz-sidebar-label">More</div><a href="index.html" class="sz-sidebar-link">← Overview</a><a href="scope.html" class="sz-sidebar-link">← Full scope</a></div>
+</nav>
+<main class="sz-wrap">
+<section id="discovery" class="sz-section sz-doc"><div class="sz-section-eyebrow">Source document</div><p class="sz-banner">As of 2026-11-09.</p><h1>Discovery Brief: Metz/Chef2Home Health Cloud 2026</h1>
+<p><strong>Status:</strong> Discovery, 2026-11-09 · <strong>Sources:</strong> client scoping questionnaire v2, client service codes and modifiers sheet, chef2home.com, public web research · <strong>Products in scope:</strong> Health Cloud (Agentforce Health), MuleSoft</p>
+<p>Confidence labels: <strong>Confirmed</strong> = the client stated it in writing; <strong>Assumed</strong> = a working assumption the Solution Lead set or endorsed, pending client confirmation; <strong>Unknown</strong> = not yet answered.</p>
+<h2>Executive Summary</h2>
+<p>Chef2Home by Metz delivers medically tailored home meals paid for by Ohio Medicaid waivers, MyCare managed care plans, Area Agencies on Aging (AAAs), the Ohio Department of Developmental Disabilities (DODD) and county levies. It wants Health Cloud added to its existing Chef2Home Salesforce org for the whole referral-to-cash cycle:
+- <strong>Referral intake:</strong> document automation for about 1,400 referrals a week.
+- <strong>Funding sources:</strong> one Care Program per funding source.
+- <strong>Claims:</strong> 837P claims sent out through MuleSoft to seven clearinghouses, and 835 remittance files read back in to drive claim status and rebilling.</p>
+<p>The client's target is go-live on <strong>29 January 2027</strong>, with billing live that same day. That date is the top risk, because seven clearinghouse connections must be set up and tested with outside parties in the same window.</p>
+<h2>Company and Industry Context</h2>
+<ul>
+<li><strong>Who they are.</strong> Chef2Home is a healthcare meal service line of Metz Culinary Management, LLC (Dallas, PA; founded 1994; CEO Jeff Metz). Metz has served senior meals since 1996 and launched Chef2Home in June 2022, producing meals at a USDA-approved culinary center in Sarasota, FL. <em>(Confirmed: chef2home.com, metzculinary.com)</em></li>
+<li><strong>The Ohio operation.</strong> Global Meals (Columbus, OH) became "a division of Chef2Home by Metz" in June 2024 and serves all 88 Ohio counties (and Indiana). Its published funders are PASSPORT, the Ohio Home Care Waiver, DODD, the Franklin County Senior Options levy, McGregor PACE (Program of All-Inclusive Care for the Elderly) and AAAs for planning areas 1–11. These match the client's service-code sheet. <em>(Confirmed public source. That this is the operation in scope is inferred.)</em></li>
+<li><strong>Scope boundary.</strong> Ohio only for this phase. Every payer on the service-code sheet is in Ohio. <em>(Assumed: Solution Lead, 2026-11-09)</em></li>
+<li><strong>Who pays and who refers.</strong> A <em>case manager</em> at a payer or agency refers the client and is linked to the client's <em>Funding Source</em>. There are about 40 funding sources. A client has only one active funding source at a time; moving between payers is a <em>Funding Source change</em>. <em>(Confirmed)</em></li>
+</ul>
+<h2>Current vs. Target Salesforce Landscape</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Current (Confirmed)</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Org</td>
+<td>Existing Chef2Home production org with Service Cloud live; a new full sandbox is ready for this work</td>
+<td>Health Cloud built in the same org (ADR 0001). No Service Cloud changes beyond what Health Cloud needs.</td>
+</tr>
+<tr>
+<td>Finance</td>
+<td>Certinia (formerly FinancialForce) in a separate Metz Salesforce org</td>
+<td>Unchanged. Reports cover the gap; Metz will build the org-to-org MuleSoft sync later, on its own.</td>
+</tr>
+<tr>
+<td>Intake</td>
+<td>71% email, 22% fax (PDF via eFax), 7% partner portal (expected to triple within 60 days). An email flow sets High/Med/Low by keyword. 7 intake specialists.</td>
+<td>Health Cloud referral records created from received documents, with case manager name, client name and keywords extracted. Matching to existing case managers and clients is a "bonus".</td>
+</tr>
+<tr>
+<td>Funding source</td>
+<td>A custom Funding Source object related to the contact probably exists</td>
+<td>Funding source modeled as a Care Program, with coverage periods and audit history (ADR 0003)</td>
+</tr>
+<tr>
+<td>Scheduling and delivery</td>
+<td>Complex custom-object scheduling and meal rotation; drivers use the Salesforce mobile app on phone/iPad (already built)</td>
+<td>Unchanged. The client's internal team owns it. A missed-delivery alert reaches route supervisors as a Salesforce notification (no Slack).</td>
+</tr>
+<tr>
+<td>Claims (837)</td>
+<td>An "old system" (name Unknown) whose renewal ends 31 March 2027. A user creates a batch with a button. Files go to 5–7 clearinghouses (Availity, Office Ally and others).</td>
+<td>Claims and claim lines in Health Cloud, one line per delivery. A user-started batch with a manual review step before submission. MuleSoft builds the 837P and sends it automatically to all seven clearinghouses.</td>
+</tr>
+<tr>
+<td>Remittance (835)</td>
+<td>Retrieved manually from Availity (managed care plans) and the Ohio.gov PASSPORT EDI portal (PASSPORT/AAA). No denial automation; billers review claims by status.</td>
+<td>Metz keeps retrieving files and drops them where MuleSoft reads them. Salesforce updates claim status and amount paid. A mass update moves Denied (D) or Partial Pay (PP) claims to Rebill for the next batch.</td>
+</tr>
+</tbody>
+</table>
+<h2>Project Scope and Objectives</h2>
+<p><strong>Objective (Confirmed):</strong> be operating in February 2027 and bill the first week of March, before the old system's renewal ends on 31 March 2027. The Solution Lead added that billing must be live at go-live on 29 January.</p>
+<p><strong>In scope (working):</strong>
+1. <strong>Health Cloud foundation</strong> in the existing org:
+   - Person accounts (ADR 0002), including conversion of today's client Contacts.
+   - Care network relationships for family caregivers, spouses and advocates.
+   - Regression testing of live Service Cloud.
+2. <strong>Referral intake and document automation.</strong> Documents from eFax, email and portal become Health Cloud referral records (Clinical Service Requests), with extracted fields and specialist review.
+3. <strong>Funding Source as Care Program:</strong>
+   - About 40 programs.
+   - Enrollment, plus coverage periods that hold the authorization reference.
+   - A rule that only one coverage period is active at a time.
+   - Field history and record locking (ADR 0003).
+4. <strong>Authorization capture and tracking.</strong> Approved authorizations arrive on referral documents. Whether expiry alerts are in MVP is open.
+5. <strong>Claims in Health Cloud.</strong> One claim line per delivery (billing is by delivery). The status lifecycle runs Ready → Batched → Submitted → Paid / Denied / Partial Pay → Rebill. Records lock once submitted. Custom vs. standard object is a detailed-design call.
+6. <strong>Service-code mapping per funding source.</strong> Procedure code S5170 with payer-specific modifiers (U6, U7, UA, UA:U7). DODD uses AMN/FMN/SMN codes instead. The same meal type takes different modifiers by payer (kosher is U6 for Anthem and CareSource, U7 for Molina), so mapping is data, not code. DODD is in scope.
+7. <strong>837P generation and submission through MuleSoft</strong> to all seven clearinghouses automatically (Assumed). PS helps create and adjust test files; Metz runs trading-partner testing using its existing sample 837s.
+8. <strong>835 ingestion through MuleSoft.</strong> Design assumption:
+   - 835 files come from 7 sources, one per clearinghouse (Assumed), and Metz drops them in one SFTP folder.
+   - Each 837 line carries the delivery ID, so 835 lines match back to the exact delivery.
+   - Unmatched lines go to a review queue.
+   - A mass Denied/Partial Pay → Rebill action.
+   - Billing list views by status.
+9. <strong>Missed-delivery alert</strong> to route supervisors as a Salesforce custom notification on desktop and mobile. Slack is not used.
+10. <strong>Data migration</strong> from the old system. Assumed: about 13 months of delivery and claim history, plus active clients, funding sources and authorizations.
+11. <strong>Audit reporting and record locking</strong> with standard Salesforce reports on deliveries made.
+12. <strong>Optional change management consultant</strong> for intake and billing training and adoption. Metz runs the system after go-live.</p>
+<p><strong>Out of scope (Confirmed or decided):</strong>
+- Indiana and non-Ohio operations (this phase).
+- Web intake form: the client has none today.
+- Digital consent and signatures. The audit covers deliveries made, using proof of delivery already captured in Metz's mobile app.
+- Delivery scheduling and meal rotation (client internal team).
+- 270/271 eligibility checks (Phase 2).
+- 278 electronic prior authorization.
+- Agentforce for Service and Service Assistant (Phase 2).
+- Salesforce Maps.
+- Certinia integration (Metz builds it later).
+- Automated 835 retrieval from Availity or the PASSPORT portal.</p>
+<h2>Data and Compliance Considerations</h2>
+<ul>
+<li><strong>Audit.</strong> The client is audited annually. Reports are needed on deliveries, signatures, geotag, timestamps and authorizations. In the client's words, "I don't think there is anything difficult… the ability to lock records down to not be editable at a certain point is the main requirement." The lock trigger points are still open.</li>
+<li><strong>History.</strong> Funding-source, delivery and claim history must survive payer changes, denials, rebills and authorization updates. Field history tracking and record locks apply.</li>
+<li><strong>Protected health information.</strong> The client hasn't stated HIPAA, Shield or retention requirements.</li>
+<li><strong>Migration.</strong> The old system's name and record volumes are Unknown. The scope above assumes about 13 months of history.</li>
+<li><strong>Person accounts.</strong> Turning them on is permanent. Clients are Contacts today; converting them to person accounts is in scope (ADR 0002, amended 2026-11-09).</li>
+</ul>
+<h2>Research Findings and Market Context</h2>
+<ul>
+<li><strong>Ohio billing context.</strong> Ohio Home Care Waiver home-delivered meals bill per meal under S5170 (Ohio Administrative Code 5160-46-06, effective 17 April 2026). The client's service-code sheet confirms S5170 with payer-specific modifiers across the waiver, MyCare and PASSPORT.</li>
+<li><strong>Managed care churn.</strong> Next Generation MyCare Ohio went live on 1 January 2026 with four plans, including Anthem and CareSource, and is expanding statewide through 2026. Clients moving between plans is expected to continue, which is why ADR 0003 is designed around Funding Source changes.</li>
+<li><strong>Policy headwind.</strong> In March 2025 the Centers for Medicare &amp; Medicaid Services (CMS) rescinded its health-related social needs (HRSN) waiver framework. Existing approvals stand. This adds uncertainty for new food-as-medicine funding, not for current waiver billing.</li>
+<li><strong>Competitors.</strong> Mom's Meals (PurFoods), GA Foods/SunMeadow, Tangelo and Homestyle Direct. Mom's Meals runs a national case-manager referral portal; portal intake is the market direction, consistent with the client's expected tripling of portal referrals.</li>
+<li><strong>Not found.</strong> No public evidence of the client's Salesforce or Certinia use. Revenue and headcount figures are third-party estimates only and are left out here.</li>
+</ul>
+<p>Sources: <code>discovery-notes/chef2home-website-2026-11-06.md</code>, <code>discovery-notes/web-research-metz-chef2home-market-2026-11-06.md</code>.</p>
+<h2>Architecture Premises (for ratification)</h2>
+<table>
+<thead>
+<tr>
+<th>ADR</th>
+<th>Premise</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0001</td>
+<td>Build in the existing Chef2Home production org via the new full sandbox; the Certinia org is separate and untouched; Service Cloud regression testing is in scope</td>
+<td>Client-supplied (questionnaire)</td>
+</tr>
+<tr>
+<td>0002</td>
+<td>Clients are person accounts, which Health Cloud requires [KA-41084]; turning them on is irreversible [KA-41826]; today's client Contacts are converted in scope</td>
+<td>Recommended; Solution Lead endorsed, amended 2026-11-09</td>
+</tr>
+<tr>
+<td>0003</td>
+<td>Each funding source is a Care Program, with one enrollment per client per program, reopened when the client returns [KA-18914]. A child coverage-period record holds dates, authorization reference and active flag, with one active period across all enrollments. Deliveries and claims link to the coverage period.</td>
+<td>Recommended; Solution Lead endorsed</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Grounded design notes:</strong>
+- <strong>Referral intake.</strong> The Process Received Document action turns a received document into a Clinical Service Request, using queues and record-triggered flows [KA-41819]. Documents can be created programmatically (PDF, JPG, PNG; up to 35 MB per call) [KA-41472]. Fax intake is supported [KA-41290]. Extraction and routing need the Intelligent Document Reader with Amazon Textract add-on [KA-41019]; the account executive owns licensing.
+- <strong>Claims.</strong> The knowledge base's Health Cloud claims material covers payer-side claims data in Data 360 [KA-41695], not claims a provider generates and sends. Provider-side claims are therefore a design decision. 🟡
+- <strong>837/835 through MuleSoft.</strong> No knowledge-base article covers healthcare X12 claims files through MuleSoft. The integration pattern (837P generation, SFTP/API transport per clearinghouse, 835 parsing and matching on the delivery ID) is general implementation guidance, not grounded. 🟡</p>
+<h2>Key Risks</h2>
+<ol>
+<li><strong>Timeline.</strong> About 11.5 calendar weeks remain from today to the client's 29 January 2027 target, including the holidays. Billing must be live on day one.
+   - Seven clearinghouse connections each need trading-partner setup and testing on the outside party's schedule. That pace can't be compressed.
+   - Fallback: the old system runs until 31 March 2027, and first billing on the new platform is the first week of March, which leaves some room.</li>
+<li><strong>Claims build depth.</strong> Claims, the code mapping for about 40 funding sources (including DODD's separate codes), the batch and review step, 835 matching and rebill all have to work before the first billing run.</li>
+<li><strong>Live-org change.</strong> Person accounts are irreversible, Health Cloud goes in beside a production Service Cloud, and the existing Funding Source object and keyword flow must be remapped.</li>
+<li><strong>Client team capacity.</strong> Scheduling changes owned by the client must land in parallel with the Care Program and claims design, and Metz runs trading-partner testing.</li>
+<li><strong>Document automation add-on.</strong> Extraction depends on a separately licensed add-on.</li>
+</ol>
+<h2>Open Questions</h2>
+<p><strong>Claims and remittance</strong>
+1. <strong>G0001:</strong> Name the seven clearinghouses, the transport each supports (SFTP or API), and which payers route through each.
+2. <strong>G0002:</strong> How many payer companion guides need specific mapping? What are the therapeutic codes for Anthem, CareSource and PASSPORT (not on the sheet)? Confirm DODD's AMN/FMN/SMN codes go out on an 837P through a clearinghouse.
+3. <strong>G0003:</strong> Which funding sources set units by meals per day (1 or 2) vs. 14 per delivery, or split the bill, and how?
+4. <strong>G0005:</strong> Confirm the SFTP drop folder for 835s and the delivery-ID matching approach.</p>
+<p><strong>Operations and scope</strong>
+5. <strong>G0019:</strong> Confirm Ohio only (Indiana out) for this phase.
+6. <strong>G0008:</strong> What is the old system? Record counts, and confirm about 13 months of delivery and claim history.
+7. <strong>G0014:</strong> User counts by persona (intake, service reps, billing, route supervisors, drivers).
+8. <strong>G0016:</strong> Internal team ownership and capacity for scheduling changes and trading-partner testing; executive sponsor and stakeholders.</p>
+<p><strong>Intake</strong>
+9. <strong>G0006:</strong> Do emailed referrals arrive as PDF attachments? What share are scanned or handwritten?
+10. <strong>G0010:</strong> How do the existing keyword flow and the 7 specialists' review workflow move to the referral record?
+11. <strong>G0011:</strong> Confirm the document-reader add-on with the account executive.</p>
+<p><strong>Data model, compliance and alerts</strong>
+12. <strong>G0007:</strong> Answered: clients are Contacts today; conversion is in scope.
+13. <strong>G0017:</strong> Care network relationship types, and any signing or speaking rights.
+14. <strong>G0012:</strong> At what points do records lock (delivery confirmed, claim submitted), and for which objects? Full list of audit reports.
+15. <strong>G0015:</strong> HIPAA, Shield and audit-retention requirements.
+16. <strong>G0018:</strong> Are authorization expiry alerts in MVP?
+17. <strong>G0013:</strong> What triggers a missed-delivery notification, and is a console list view also needed?</p>
+<hr />
+<p><em>Timeline row: </em><em>Confirmed</em><em> as the client's target (29 January 2027 go-live). It is not a delivery commitment; our duration comes from the roadmap.</em></p></section><hr class="sz-divider"><section id="solution" class="sz-section sz-doc"><div class="sz-section-eyebrow">Source document</div><p class="sz-banner">As of 2026-11-09. Gap count has since grown from 136 to 138.</p><h1>Solution: Metz/Chef2Home Health Cloud 2026</h1>
+<p><strong>Status:</strong> Design, 2026-11-09 · <strong>Products in scope:</strong> Health Cloud (Agentforce Health), MuleSoft · <strong>Builds on:</strong> <code>outputs/00-discovery-brief.md</code>, ADRs 0001–0003, 10 epics, 136 gaps</p>
+<p>Source tags: <code>[KA-XXXX]</code> = central Salesforce knowledge base article; <code>[docs: …]</code> = Salesforce/MuleSoft product documentation; <code>[extends: …]</code> = a grounded pattern applied to a slightly different use; <code>[assumption: …]</code> = general implementation judgment, with what would validate it. 🔴 marks a decision still open.</p>
+<h2>Summary</h2>
+<p>Chef2Home gets one referral-to-cash flow inside its existing Salesforce org:
+- Referral documents arrive by email, fax and portal and become Health Cloud referrals.
+- Each client is enrolled in the Care Program for their funding source, with a coverage period that holds the authorization.
+- Every delivery becomes a claim line.
+- MuleSoft turns submitted batches into 837P files for seven clearinghouses and reads 835 remittance files back.
+- Each payment result is matched to the exact delivery and kept as history.</p>
+<p>Supporting this:
+- A permission model sized for protected health information.
+- Record locks for the annual audit.
+- A rehearsed Contact-to-person-account conversion.
+- A shared release pipeline, because Metz's own team keeps building scheduling in the same org.</p>
+<hr />
+<h2>Architecture Foundations</h2>
+<h3>Org strategy</h3>
+<ul>
+<li><strong>One org.</strong> Health Cloud is built in the existing Chef2Home production org, through the new full sandbox. The separate Metz org that runs Certinia is untouched (ADR 0001, client-supplied).</li>
+<li><strong>Service Cloud.</strong> Live Service Cloud gets a regression pass before each production deploy.</li>
+<li><strong>Person accounts.</strong> Health Cloud requires person accounts for clients [KA-41084].</li>
+<li>Turning them on can't be undone [KA-41826].</li>
+<li>Clients are Contacts today, and converting them is in scope (ADR 0002, amended).</li>
+<li>Person accounts are turned on in production as a planned cutover step, after the conversion rehearsal passes in the full sandbox (see Data Migration below).</li>
+</ul>
+<h3>Sharing model and protected health information</h3>
+<ul>
+<li><strong>Defaults.</strong> Org-wide defaults are Private for person accounts, care program enrollments, coverage periods, claims and remittance records.</li>
+<li><strong>Access by role.</strong> Access comes from one permission set group per persona [KA-10394]:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Persona</th>
+<th>Access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intake specialists (7)</td>
+<td>referrals, documents, client create</td>
+</tr>
+<tr>
+<td>Service reps</td>
+<td>client read, referral read</td>
+</tr>
+<tr>
+<td>Billing</td>
+<td>claims, remittance, coverage periods</td>
+</tr>
+<tr>
+<td>Route supervisors</td>
+<td>delivery exceptions, missed-delivery alerts</td>
+</tr>
+<tr>
+<td>Drivers</td>
+<td>existing mobile app access, unchanged</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Field-level security.</strong> Clinical and diagnosis fields extracted from referrals are restricted by field-level security.</li>
+<li><strong>Shield and retention are still open</strong> (G0015, G0901). Standard field history is kept for 18 months in the UI and 24 months through the API [KA-11166][KA-11519]. Keeping it longer means a scheduled export or Field Audit Trail [KA-11335][KA-11433]. The account executive owns licensing.</li>
+</ul>
+<h3>Environments and release management</h3>
+<ul>
+<li><strong>Starting point.</strong> Today, Metz's internal team changes delivery and scheduling objects in the same production org. Discovery named no source control or release process (G0105).</li>
+<li><strong>Pipeline.</strong> One source-controlled pipeline is shared by both teams (Salesforce PS and Metz) [KA-27285].</li>
+<li>Tooling is either DevOps Center/Lifecycle Center or a Salesforce CLI pipeline. Metz chooses and owns it.</li>
+<li>Change sets and DX Inspector don't fit two teams releasing into one org [KA-27347].</li>
+<li>With more than one team in the org, source-driven development is the standard recommendation.</li>
+<li><strong>Environments.</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Developer sandboxes</td>
+<td>Build</td>
+</tr>
+<tr>
+<td>The new full sandbox</td>
+<td>Integration testing, the conversion rehearsal and UAT</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>Live org</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Refreshes.</strong> Refreshing a sandbox breaks its pipeline stage. Refreshes follow an agreed calendar, and the refreshed environment is reconnected to the pipeline afterwards [KA-27219]. Protected health information in lower environments is masked [KA-28108][KA-44327].</li>
+<li><strong>Release calendar.</strong> One calendar for both teams, with code freezes around the person-account switch-on and the go-live deploy.</li>
+</ul>
+<h3>Governance and run state</h3>
+<ul>
+<li><strong>Who runs it.</strong> Metz runs the system after go-live.</li>
+<li><strong>Billing setup is data, not code.</strong> Code mappings, payer rebill rules and clearinghouse routing live in records the billing team edits. They don't need a release.</li>
+<li><strong>Change management.</strong> An optional change management consultant covers intake and billing adoption. If Metz declines it, Metz owns enablement.</li>
+</ul>
+<hr />
+<h2>Solution by Business Process</h2>
+<p>Ordered by how value flows: client record → referral → funding → delivery → claim → submission → payment → audit, then migration and program.</p>
+<h3>1. Health Cloud Foundation and Org Readiness (E01)</h3>
+<p><strong>Business context:</strong> Clients are Contacts in a Service Cloud org today. Caregivers and advocates aren't modeled, and nothing separates protected health information from general service data.</p>
+<p><strong>Solution approach:</strong>
+- Install Health Cloud in the existing org, with clients as person accounts.
+- Model family caregivers, spouses and advocates in the care network [KA-2459][KA-41041].
+- Set up the permission set groups described under Foundations.</p>
+<p><strong>Supporting architecture:</strong>
+- Care network relationship types and any signing or speaking rights are open (G0017).
+- Service Cloud regression covers the existing keyword email flow, Cases and the drivers' mobile app.</p>
+<h3>2. Referral Intake and Document Automation (E02)</h3>
+<p><strong>Business context:</strong> About 1,400 referrals a week reach 7 intake specialists: 71% by email, 22% by eFax and 7% through a partner portal, with portal volume expected to triple. An email flow sets High/Med/Low priority by keyword. Specialists key in everything else.</p>
+<p><strong>Solution approach:</strong> Every channel lands as a Health Cloud Received Document.
+- Intelligent Document Reader pulls out the case manager, client, address changes and priority keywords.
+- The Process Received Document action creates the referral (Clinical Service Request) [KA-41819].
+- Specialists review it in priority triage queues.</p>
+<p><strong>Supporting architecture:</strong>
+- <strong>Email (resolves G0201).</strong>
+  - Metz IT sets up the Office 365 referral mailbox to decrypt on the mail server, so messages arrive as standard emails with PDF attachments [assumption: Metz IT can configure server-side decryption; client responsibility, validate with Metz IT].
+  - MuleSoft reads the mailbox, splits emails that carry several attachments, and makes one Composite API call per PDF. That call creates the Content Document and the Received Document and links them (PDF, JPG or PNG, under 35 MB) [KA-41472].
+  - A body-only email goes to the review queue as-is.
+- <strong>Fax.</strong> Fax uses Health Cloud's native fax intake [KA-41290].
+- <strong>Portal.</strong> Portal uploads create the same Received Document record.
+- <strong>Extraction.</strong> Health Cloud's Intelligent Document Reader with Amazon Textract does the extraction [KA-41019]. Using it rather than a separate MuleSoft parser keeps one extraction engine for all channels. The account executive owns the add-on licensing.
+- <strong>Routing.</strong>
+  - Two queues: one for newly received documents and one for processed documents.
+  - A record-triggered flow moves each document between them. The flow that fires when text extraction succeeds runs asynchronously [KA-41473][KA-41819].
+  - Extracted keywords drive the existing High/Med/Low triage into priority queues [extends: KA-41819 flow routing, with keyword logic on the extracted text].
+- <strong>Address changes.</strong> An extracted address change is staged on the referral for a specialist to confirm. It never overwrites the client's address automatically.
+- <strong>Matching.</strong> Matching the referral to existing case managers and clients is an extra on top of the core flow.</p>
+<h3>3. Funding Sources, Care Programs and Authorizations (E03)</h3>
+<p><strong>Business context:</strong>
+- About 40 funding sources pay for meals.
+- A client has one active funding source at a time and moves between payers often, especially under Next Generation MyCare.
+- Authorizations arrive on the referral documents.
+- The modifier billed depends on both the payer and the meal type.</p>
+<p><strong>Solution approach:</strong>
+- Each funding source is a Care Program.
+- Each client has one enrollment per program, reopened when the client returns [KA-18914].
+- A coverage-period child record holds the dates, the authorization reference and the active flag, and only one coverage period can be active across all of a client's enrollments (ADR 0003). Authorizations are captured onto the coverage period [KA-41246][KA-41971].
+- A Funding Source change closes one coverage period and opens another.</p>
+<p><strong>Supporting architecture:</strong>
+- <strong>Billing code mapping is a data object</strong> the billing team maintains. It's keyed on funding source × meal type and returns the procedure code, modifier and units rule. Examples: S5170 with U6, U7, UA or UA:U7, and DODD's AMN/FMN/SMN codes.
+  - Custom metadata is rejected because every change would need a deployment [KA-38798][KA-0026].
+  - [assumption: meal type is stored per client or per authorization; validate with G0301]
+  - Units rules are settled in detailed design (G0003).
+- <strong>Payer rebill style</strong> is a setting on the same billing setup (see Claims).
+- <strong>The existing Funding Source object (G0305) is decided in detailed design</strong>, after reviewing the object and everything that references it.
+  - We lean toward reusing it as the coverage-period child under the enrollment if Metz's scheduling objects depend on it, which saves re-pointing their lookups and flows.
+  - Existing rows with repeat stints collapse into one enrollment with several coverage periods [KA-18914]. "Multiple Enrollments in the Same Care Program" stays off.
+- <strong>Change history.</strong> Field history is tracked on enrollments and coverage periods.</p>
+<h3>4. Missed-Delivery Alert (E07)</h3>
+<p><strong>Business context:</strong> Drivers already use the Salesforce mobile app. Route supervisors hear about a missed delivery too late to recover the route.</p>
+<p><strong>Solution approach:</strong>
+- When a driver flags a missed delivery, a record-triggered flow sends a Salesforce custom notification to the route supervisors, on desktop and mobile push [KA-35168][KA-39156][KA-39159].
+- Slack is not used.</p>
+<p><strong>Supporting architecture:</strong>
+- <strong>Message limits.</strong> Notification text is plain and character-limited [KA-39155].
+- <strong>Lock screen.</strong> The "Display full content push notifications" setting stays off, so no protected health information shows on a lock screen. The notification links to the record instead.
+- <strong>Delivery objects are Metz's.</strong> The missed-delivery flag belongs to Metz's own delivery objects. We add only the trigger and the notification.
+- <strong>Open.</strong> The exact trigger and whether supervisors also need a console list view are open (G0013).</p>
+<h3>5. Claims and Billing Operations (E04)</h3>
+<p><strong>Business context:</strong>
+- Today a biller clicks a button in the old system to create a batch, then reviews claims by status by hand.
+- There's no denial automation.
+- The old system's renewal ends 31 March 2027.</p>
+<p><strong>Solution approach:</strong>
+- Claims and claim lines live in Health Cloud, with one claim line per delivery, each carrying its own line ID [KA-0004][KA-13626].
+- A biller starts a batch for one payer, reviews it, then submits it.
+- Billing list views by status, and a mass Denied/Partial Pay → Rebill update [KA-39149][KA-35220].
+- Submitted claims lock (see Audit).</p>
+<p><strong>Supporting architecture:</strong>
+- <strong>Status lifecycle.</strong> Ready → Batched → Submitted → Paid / Denied / Partial Pay → Rebill.
+- <strong>Object choice.</strong> Standard Insurance Claim/Claim Item [KA-18465][KA-17487] vs custom claim objects is decided in detailed design. 🟡 The knowledge base's Health Cloud claims material is payer-side [KA-41695].
+- <strong>Line shape.</strong> The line ID, not the delivery ID alone, is the matching key. That's because Metz may deliver more than once a day, and a per-day payer may split one delivery into several lines (G0401, G0003).
+- <strong>Rebill (resolves G0404).</strong>
+  - The payer's claim control number is captured from every 835 and stored on the remittance record. That supports both rebill styles: a new original claim, or a replacement (frequency code 7) or void (code 8) that quotes the payer's claim number.
+  - Each payer's style is configured in the billing setup [assumption: confirm per-payer rules from Metz's saved 837 rebills and companion guides (G0002)].
+- <strong>Moving a delivery to a different payer</strong> after a denial is a new claim to that payer, not a rebill (G0304).</p>
+<h3>6. 837P Claim Submission Integration (E05)</h3>
+<p><strong>Business context:</strong> Claims go to seven clearinghouses (Availity, Office Ally and others), and each payer has its own companion guide.</p>
+<p><strong>Solution approach:</strong>
+- Submitting a batch publishes an event that MuleSoft subscribes to [KA-0141][KA-0445].
+- MuleSoft pulls the claim lines, applies the billing code mapping and builds a HIPAA 837P file.
+- It sends the file automatically to the right clearinghouse, over SFTP or API.</p>
+<p><strong>Supporting architecture:</strong>
+- <strong>Connector (resolves G0508).</strong> MuleSoft's X12 EDI Connector runs in a standard Mule app. It supports 005010X222A1 (837P) and 005010X221A1 (835) [docs: MuleSoft X12 EDI Connector 3.0, HIPAA versions]. Each payer's companion-guide rules are applied as overrides.
+  - [assumption: connector schemas plus overrides cover the payers' guides; validate in trading-partner testing]
+  - Anypoint Partner Manager is the fallback if managing the trading partners outgrows the app.
+- <strong>Delivery ID in the file.</strong> Each claim line ID goes into the 837 line item control number so the 835 can echo it back.
+- <strong>Safe resends.</strong> Sends are keyed on the batch ID, so a retry can't double-submit [KA-26029][KA-20501].
+- <strong>Status updates.</strong> The batch status is written back to Salesforce, and a failed send raises a billing alert.
+- <strong>Credentials.</strong> Clearinghouse credentials live in MuleSoft secure properties.
+- <strong>Testing is at the partners' pace.</strong> PS helps create and adjust test files from Metz's sample 837s. Metz runs trading-partner testing with each clearinghouse. That testing happens on the outside parties' schedule and isn't compressed (G0001, G0002).</p>
+<h3>7. 835 Remittance Integration (E06)</h3>
+<p><strong>Business context:</strong>
+- Billers download 835 files by hand from Availity and the Ohio.gov PASSPORT EDI portal, then work denials by status.
+- Metz keeps retrieving the files.
+- There are seven sources, one per clearinghouse.</p>
+<p><strong>Solution approach:</strong>
+- Metz drops the 835s into one SFTP folder.
+- MuleSoft polls the folder, parses the files and matches each payment line to the claim line through the echoed line ID.
+- The claim status and amount paid are updated.
+- Unmatched lines go to a review queue.</p>
+<p><strong>Supporting architecture:</strong>
+- <strong>Remittance history (resolves G0605, Option B).</strong>
+  - A remittance header is created per 835 payment, plus one remittance line per claim line per 835. Each line holds the status, the amount paid, the adjustment reason codes and the payer claim control number.
+  - The latest result rolls up to the claim line.
+  - A delivery that's denied, rebilled, paid and later reversed keeps its full trail for the audit and for reconciling what was billed against what was paid.
+  - [assumption: Metz needs this history; validate against audit lookback (G0901)]
+- <strong>Duplicate files.</strong> Re-reading the same 835 file is ignored, keyed on the file's control number and the payer [KA-26029].
+- <strong>Scope boundary.</strong> E06 posts results and stops there. Cash posting to Certinia is Metz's later integration (G0616).
+- <strong>Test data.</strong> The build uses sample 835s. Live payer files confirm it in the first March billing run.</p>
+<h3>8. Audit Reporting and Record Locking (E09)</h3>
+<p><strong>Business context:</strong> Metz is audited every year on deliveries made. The auditors want records that can't be changed after a certain point.</p>
+<p><strong>Solution approach:</strong>
+- Standard Salesforce reports cover deliveries, geotag and timestamps (from proof of delivery already in Metz's mobile app), authorizations and claims.
+- Deliveries, coverage periods and claims lock at defined points.</p>
+<p><strong>Supporting architecture:</strong>
+- <strong>How locking works.</strong> A status-driven record-type swap plus validation rules, with no custom code [KA-38980][KA-35088][KA-38982][KA-38963]. Billing supervisors get a controlled unlock permission for corrections.
+- <strong>Open.</strong> The lock points are open (G0012).
+- <strong>Change history.</strong> Field history is kept on coverage periods, claims and remittance lines [KA-11519].
+- <strong>Pre-go-live history.</strong> Migrated records arrive with no change history. The old system's audit trail has to be archived outside Salesforce, as an export kept by Metz (G0902).
+- <strong>Consent and signatures</strong> are out of scope.</p>
+<h3>9. Data Migration and Person Account Conversion (E08)</h3>
+<p><strong>Business context:</strong> Clients are Contacts in the live org today. About 13 months of delivery and claim history, plus active clients, funding sources, authorizations and open referrals, sit in an old system that ends on 31 March 2027.</p>
+<p><strong>Solution approach:</strong>
+1. Convert the Contacts to person accounts in place.
+2. Load the old system's data in dependency order.
+3. Rehearse both steps in the full sandbox before production.</p>
+<p><strong>Supporting architecture:</strong>
+- <strong>In-place conversion (G0802 Option A).</strong>
+  - Export, change to the Person Account record type and re-import with Data Loader. Record IDs are kept, so Cases, Funding Source, delivery and scheduling records and the mobile flows stay linked [KA-45684][KA-45683].
+  - Prerequisites:
+    - one contact per account
+    - the same owner and currency on both
+    - relationship fields blank
+    - no portal users [KA-4956][KA-37787]
+  - Clients that fail the prerequisites are cleaned up first. Option B (new person accounts, then re-point every child record) applies only if cleanup can't fix them.
+- <strong>Load order.</strong>
+  1. Clients
+  2. Enrollments (exactly one per client per program, or the load fails [KA-18914])
+  3. Coverage periods
+  4. Open referrals
+  5. Deliveries and claims
+  6. Remittance history [KA-39441][KA-20422][KA-47102][KA-47245][KA-47136]
+- <strong>Extracts and volumes.</strong> Metz provides flat-file extracts from the old system. The system's name and volumes are still open (G0008, G0819).
+- <strong>Cutover.</strong> Billing stays in the old system until its last run. Open claims are cut over at a planned point (G0413).</p>
+<h3>10. Program Management, Testing and Cutover (E10)</h3>
+<p><strong>Business context:</strong> The client's target is go-live on 29 January 2027, with billing live that day. The first deliveries start 2 February, and the first billing run is the first week of March. The old system runs until 31 March 2027.</p>
+<p><strong>Solution approach:</strong>
+- Project management, the test plan, user acceptance testing, cutover and hypercare.
+- The optional change management consultant.</p>
+<p><strong>Supporting architecture:</strong>
+- <strong>Planned cutover sequence.</strong>
+  1. Conversion rehearsal
+  2. Person accounts turned on in production
+  3. Conversion
+  4. Deploy
+  5. Migration
+  6. Smoke test
+- <strong>Billing go-live.</strong> Billing goes live on 29 January as decided. The buffer before the first March run is noted.
+- <strong>Still open (G1007), the client's call:</strong>
+  - the go/no-go criteria
+  - whether any clearinghouse that isn't certified keeps billing in the old system until it passes
+  - the fallback if the March run fails</p>
+<p>Options to bring to Metz:
+  - One go-live with every clearinghouse.
+  - Go live on 29 January with clearinghouses switched on one by one as each is certified. The tradeoff: less risk to the date, but Metz runs two billing systems for a while.</p>
+<hr />
+<h2>Open architecture decisions</h2>
+<table>
+<thead>
+<tr>
+<th>Fork</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G0201 email ingestion</td>
+<td>Resolved: Metz IT decrypts on the mail server; MuleSoft → Received Document → IDR [KA-41472][KA-41819][KA-41473]</td>
+</tr>
+<tr>
+<td>G0105 release pipeline</td>
+<td>Pattern grounded [KA-27285][KA-27219]; Metz to name the owner and tool</td>
+</tr>
+<tr>
+<td>G0301 billing code mapping</td>
+<td>Data object, not custom metadata [KA-38798]; where meal type lives is open</td>
+</tr>
+<tr>
+<td>G0305 existing Funding Source object</td>
+<td>Decided in detailed design; lean toward reuse 🔴</td>
+</tr>
+<tr>
+<td>G0404 rebill style</td>
+<td>Resolved: capture the payer claim number; style set per payer 🔴 (per-payer rules)</td>
+</tr>
+<tr>
+<td>G0508 X12 build</td>
+<td>Resolved: X12 EDI Connector in a Mule app [docs] 🔴 (companion-guide coverage)</td>
+</tr>
+<tr>
+<td>G0605 remittance store</td>
+<td>Resolved: Option B, remittance history 🔴 (no atom covers a provider-side model)</td>
+</tr>
+<tr>
+<td>G0802 Contact conversion</td>
+<td>Option A in place [KA-45684][KA-45683]; Option B only if cleanup fails</td>
+</tr>
+<tr>
+<td>G1007 go/no-go and fallback</td>
+<td>Client's call</td>
+</tr>
+</tbody>
+</table>
+<p><em>Grounding: 26 decisions tagged — 21 grounded, 2 inferred, 3 flagged assumptions: billing-mapping data object keyed on meal type, X12 EDI Connector covers the payers' companion guides, remittance history store (Option B). Client-responsibility assumption: Metz IT decrypts on the mail server.</em></p></section><hr class="sz-divider"><section id="delivery" class="sz-section sz-doc"><div class="sz-section-eyebrow">Source document</div><p class="sz-banner">As of 2026-11-09, including the added Health Cloud design week. This is the current plan.</p><h1>Delivery Plan: Metz/Chef2Home Health Cloud 2026</h1>
+<p><strong>Status:</strong> Roadmap, 2026-11-09 · <strong>Builds on:</strong> <code>outputs/01-solution.md</code>, 10 epics, 136 gaps</p>
+<p><strong>Total program duration: 26 weeks (per user commitment)</strong>, AI-native delivery. This lane holds only if Metz commits to the AI-native operating model: an empowered daily product owner, a daily build cadence, a named sponsor with the mandate, AI tooling approved for PHI and a ready release pipeline. If those don't land, the plan moves to the AI-augmented lane at 29 weeks; traditional delivery is 33 weeks. Go-live is at the end of week 24, followed by two weeks of hypercare.</p>
+<p><strong>Against the client target:</strong> 29 January 2027 is about 11.5 weeks out; this plan goes live about 13 weeks after that. The go/no-go and fallback (G1007), including whether billing stays in the old system until 31 March 2027, is the client's call and needs to be made in Phase 0.</p>
+<h2>Phase sequence</h2>
+<p>Main phases run in sequence. The MuleSoft track runs alongside them and finishes inside Phase 3 cutover.</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Weeks</th>
+<th>Epics</th>
+<th>Depends on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0 Mobilize and Align</td>
+<td>2 (wk 1–2)</td>
+<td>E10 (mobilize)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>P1 Foundation and Data Model</td>
+<td>6 (wk 3–8; wk 3 is Health Cloud design)</td>
+<td>E01, E03, E08 (conversion rehearsal)</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>P2 Intake, Claims and Alerts</td>
+<td>8 (wk 9–16)</td>
+<td>E02, E04, E07</td>
+<td>P1 (E02, E07 depend on E01; E04 on E03)</td>
+</tr>
+<tr>
+<td>P3 Audit, Migration and Cutover</td>
+<td>8 (wk 17–24)</td>
+<td>E09, E08 (loads), E10 (UAT, cutover)</td>
+<td>P2 and M3 (E09 depends on E04)</td>
+</tr>
+<tr>
+<td>P4 Hypercare</td>
+<td>2 (wk 25–26)</td>
+<td>E10 (hypercare)</td>
+<td>P3</td>
+</tr>
+<tr>
+<td><strong>MuleSoft track</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>M1 Integration Design</td>
+<td>2 (wk 4–5)</td>
+<td>E05, E06, E02 mailbox reader</td>
+<td>P0; P1 design week; clearinghouse list (G0001)</td>
+</tr>
+<tr>
+<td>M2 Integration Build</td>
+<td>6 (wk 6–11)</td>
+<td>E05, E06, E02 mailbox reader</td>
+<td>M1; P1 billing data model</td>
+</tr>
+<tr>
+<td>M3 Integration and Trading-Partner Testing</td>
+<td>6 (wk 12–17)</td>
+<td>E05, E06</td>
+<td>M2; P2 claims (E05 depends on E04)</td>
+</tr>
+<tr>
+<td>M4 Integration Deploy</td>
+<td>1 (inside P3 cutover)</td>
+<td>E05, E06, E02 mailbox reader</td>
+<td>M3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critical path:</strong> E01 → E03 → E04 → E05 → E06. Slippage on any one cascades to go-live. M3 trading-partner testing runs on the seven clearinghouses' schedules and is held at 6 weeks in every delivery lane. AI tooling doesn't shorten it.</p>
+<h2>Phases</h2>
+<p><strong>P0 Mobilize and Align.</strong> Kickoff; close the decisions on the critical path: claim line shape (G0401), lock points (G0012), the old system and its volumes (G0008), the clearinghouse list (G0001) and the go/no-go and fallback (G1007). Stand up the shared pipeline and masked sandbox.
+<em>Done when:</em> those gaps are closed, the pipeline is live and the sandbox is masked.</p>
+<p><strong>P1 Foundation and Data Model.</strong> Opens with a one-week Health Cloud design: the data model, the person-account conversion approach, the PHI permission model, Care Program and coverage-period design, billing code mapping and whether to reuse the existing Funding Source object (G0305), signed off before build starts. Then Health Cloud install, person-account model, PHI permission model, Care Programs and coverage periods, billing code mapping, and the Contact-to-person-account conversion rehearsal in the full sandbox.
+<em>Done when:</em> the design is signed off at the end of week 3, the conversion rehearsal passes and the Care Program model is signed off.
+<em>Risks:</em> Funding Source reuse (G0305); conversion prerequisites (G0802).</p>
+<p><strong>P2 Intake, Claims and Alerts.</strong> Referral intake from email, fax and portal into triage queues; claims, batching and billing operations; missed-delivery alert.
+<em>Done when:</em> referrals flow from every channel to triage and the claim batch lifecycle works end to end in the sandbox.
+<em>Risks:</em> extraction accuracy; claim line shape.</p>
+<p><strong>P3 Audit, Migration and Cutover.</strong> Record locking and audit reports, data loads, UAT, the person-account switch-on, cutover and go-live.
+<em>Done when:</em> UAT is signed off, migration reconciles and go-live happens.
+<em>Risks:</em> unknown old-system volumes; billing go/no-go (G1007).</p>
+<p><strong>P4 Hypercare.</strong> Post-go-live support and handover to Metz's run team.
+<em>Done when:</em> the first billing run completes and handover is accepted. First live 835 files arrive in March.</p>
+<p><strong>M1–M4 MuleSoft track.</strong> 837P/835 mapping specs per payer companion guide and clearinghouse transport (M1); Mule apps for 837P build and send, 835 parse and match, and the mailbox reader (M2); end-to-end and trading-partner testing with all seven clearinghouses (M3); production deploy, credentials and monitoring alongside cutover (M4).
+<em>Done when:</em> all seven clearinghouses are certified, or a fallback is agreed under G1007.
+<em>Risks:</em> companion-guide variance; X12 connector coverage (G0515); credential and SFTP readiness at cutover.</p>
+<h2>Standard processes</h2>
+<ul>
+<li><strong>Testing.</strong> Unit and system testing in each build phase; Service Cloud regression before each production deploy; SIT across Health Cloud, MuleSoft and Metz's own scheduling build; UAT in P3. Metz's scheduling changes must be in the test sandbox ahead of UAT.</li>
+<li><strong>Deployment.</strong> One source-controlled pipeline and release calendar shared with Metz's team, with code freezes around the person-account switch-on and go-live.</li>
+<li><strong>Training and handover.</strong> Run-team handover in P4; the optional change management consultant covers intake and billing adoption if Metz takes it.</li>
+</ul>
+<h2>Risks</h2>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Effect</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI-native operating model not committed</td>
+<td>Plan moves to 29 weeks (augmented)</td>
+<td>Confirm product owner, cadence, sponsor, tooling and pipeline in P0</td>
+</tr>
+<tr>
+<td>Clearinghouse testing is partner-paced (E05, G0001)</td>
+<td>M3 runs long and holds go-live</td>
+<td>Name the clearinghouses in P0; agree the G1007 fallback</td>
+</tr>
+<tr>
+<td>Old system and volumes unknown (E08, G0008)</td>
+<td>Migration and cutover run long</td>
+<td>Name the system and record counts in P0</td>
+</tr>
+<tr>
+<td>Claim line shape (E04, G0401)</td>
+<td>Rework in claims and 835 matching</td>
+<td>Decide in P0</td>
+</tr>
+<tr>
+<td>Shared org with Metz's build team</td>
+<td>Release conflicts, SIT slips</td>
+<td>Shared pipeline and release calendar</td>
+</tr>
+<tr>
+<td>Client target of 29 Jan 2027</td>
+<td>Not achievable on this plan</td>
+<td>Go/no-go and old-system fallback through 31 Mar 2027 (G1007)</td>
+</tr>
+</tbody>
+</table>
+<p>The disciplines and named roster to deliver this, with defensible counts per lane, come from <code>estimate</code>.</p></section><hr class="sz-divider"><section id="estimate" class="sz-section sz-doc"><div class="sz-section-eyebrow">Source document</div><p class="sz-banner">As of 2026-11-09. Pricing deferred.</p><h1>Estimate Comparison: Metz/Chef2Home Health Cloud 2026</h1>
+<p><strong>Status:</strong> Estimate, 2026-11-09 · Solution Lead sign-off · <strong>Internal</strong></p>
+<p><strong>Pricing deferred.</strong> Timeline, effort and resourcing are complete. To add an indicative price, re-run the estimate with bill rates.</p>
+<p><strong>Anchor: AI-native (conditional).</strong> Metz prefers AI-native delivery, so the 26-week AI-native lane is the committed number. Traditional and augmented are the comparison lanes. The AI-native lane holds only if Metz commits to the AI-native operating model: a named product owner available daily (M1), a daily build cadence (M2), a named sponsor with the mandate (M3), AI tooling approved for patient data (M4) and a ready release pipeline (M5). Without those, the plan moves to augmented at 29 weeks.</p>
+<h2>Side by side</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Traditional</th>
+<th>Augmented</th>
+<th><strong>AI-native (anchor, conditional)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Committed weeks</td>
+<td>33</td>
+<td>29</td>
+<td><strong>26</strong></td>
+</tr>
+<tr>
+<td>Go-live</td>
+<td>end of week 31</td>
+<td>end of week 27</td>
+<td><strong>end of week 24</strong></td>
+</tr>
+<tr>
+<td>PS person-hours</td>
+<td>13,560</td>
+<td>11,860</td>
+<td><strong>10,560</strong></td>
+</tr>
+<tr>
+<td>Program-average FTE</td>
+<td>10.3</td>
+<td>10.2</td>
+<td><strong>10.2</strong></td>
+</tr>
+<tr>
+<td>People on the team</td>
+<td>13</td>
+<td>13 (same team)</td>
+<td>13 (senior-weighted)</td>
+</tr>
+<tr>
+<td>Effort vs traditional</td>
+<td>baseline</td>
+<td>−13.5% (band 6–16%)</td>
+<td>−22.4% (band 19–27%)</td>
+</tr>
+<tr>
+<td>Optional change management</td>
+<td>+460 hrs</td>
+<td>+400 hrs</td>
+<td>+360 hrs</td>
+</tr>
+<tr>
+<td>Confidence</td>
+<td>Assumed</td>
+<td>Assumed</td>
+<td>Unknown (conditional)</td>
+</tr>
+</tbody>
+</table>
+<p>MuleSoft trading-partner testing (M3) runs at the seven clearinghouses' pace and is held at 6 weeks in every lane. Every lane carries one Health Cloud design week at the start of Phase 1 (added 2026-11-09; +1 week and +320 hours in each lane).</p>
+<h2>What the difference is made of</h2>
+<ul>
+<li><strong>AI-native vs traditional: 7 weeks and 3,000 hours less, with almost the same FTE (−0.12).</strong> AI-native shortens the calendar; it doesn't shrink the team. The same 13 roles carry fewer hours in a shorter window, because agents absorb build and test volume and the architects direct them.</li>
+<li><strong>Seniority moves up.</strong> The Program Lead and the Salesforce Agent Orchestrator are senior in AI-native, regular in traditional.</li>
+<li><strong>Why the team doesn't shrink:</strong></li>
+<li>regulated patient-data QA (onshore lead plus offshore execution)</li>
+<li>human-only migration on real patient data</li>
+<li>companion-guide checks for seven clearinghouses</li>
+<li>~40 Care Programs of configuration volume</li>
+<li>partner-paced M3 testing</li>
+<li><strong>A first, leaner AI-native roster failed the effort check.</strong> It had 1 MuleSoft developer, 1 Salesforce developer and no offshore functional consultant: 7,960 hours, 41.7% below traditional, outside the 19–27% band. Those three roles went back in.</li>
+<li><strong>Augmented vs traditional: 4 weeks and 1,700 hours less, same team.</strong> The gain comes from AI tooling within the same operating model.</li>
+<li><strong>AI-native vs augmented: 3 weeks and 1,300 hours less.</strong></li>
+<li><strong>The MuleSoft architect stays on at half time between trading-partner testing and deploy, in every lane</strong> (AI-native weeks 18–23, augmented 20–26, traditional 21–30). This covers late certifications, fixes as the Salesforce claims build finishes, and cutover rehearsal. It adds 120 hours in AI-native, 140 in augmented and 200 in traditional. This is what the operating-model commitment buys on top of tooling.</li>
+</ul>
+<p>All differences come from <code>derive-hours.py --delta --paired</code>.</p>
+<h2>AI-native roster (anchor): 10.2 program-average FTE, 10,560 PS hours</h2>
+<table>
+<thead>
+<tr>
+<th>Role (AI-native role)</th>
+<th>Seniority · location</th>
+<th>Count</th>
+<th>Phases</th>
+<th>Allocation</th>
+<th>Hours each</th>
+<th>Person-hours</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Project / Program Manager (Program Lead)</td>
+<td>senior · onshore</td>
+<td>1</td>
+<td>P0–P4</td>
+<td>full</td>
+<td>1,040</td>
+<td>1,040</td>
+<td>Daily cadence with Metz's product owner, gate decisions, G1007 go/no-go, clearinghouse and two-team release calendar</td>
+</tr>
+<tr>
+<td>Solution Architect (Intent Architect)</td>
+<td>senior · onshore</td>
+<td>1</td>
+<td>P0–P4</td>
+<td>full</td>
+<td>1,040</td>
+<td>1,040</td>
+<td>Owns what/why and intent sign-off across Care Program, claims and patient-data models; coaches the product owner</td>
+</tr>
+<tr>
+<td>Technical Architect (Agent Orchestrator, Salesforce)</td>
+<td>senior · onshore</td>
+<td>1</td>
+<td>P0–P4</td>
+<td>full; half in P4</td>
+<td>1,000</td>
+<td>1,000</td>
+<td>Directs agents on the Health Cloud build; data model, patient-data security, person-account conversion, shared pipeline (G0105)</td>
+</tr>
+<tr>
+<td>Technical Architect, MuleSoft (Agent Orchestrator, MuleSoft track lead)</td>
+<td>senior · onshore</td>
+<td>1</td>
+<td>M1–M4, P3–P4</td>
+<td>full M1–M3; half wk 18–26</td>
+<td>760</td>
+<td>760</td>
+<td>Hands-on X12 design and build with agents; companion-guide overrides; stays on at half time between partner testing and deploy; M4 deploy and production credentials</td>
+</tr>
+<tr>
+<td>MuleSoft Technical Consultant (Logic &amp; Integration Engineer)</td>
+<td>regular · offshore, masked</td>
+<td>2</td>
+<td>M2–M3</td>
+<td>full</td>
+<td>480</td>
+<td>960</td>
+<td>837P/835 build across 7 clearinghouses; fix cycle through partner testing; owns MuleSoft QA</td>
+</tr>
+<tr>
+<td>Developer (Logic &amp; Integration Engineer)</td>
+<td>regular · offshore, masked</td>
+<td>2</td>
+<td>P1–P3</td>
+<td>full</td>
+<td>880</td>
+<td>1,760</td>
+<td>One on critical-path claims batch/rebill and 835 write-back (E04); one on intake routing, coverage rules and locking</td>
+</tr>
+<tr>
+<td>Functional Consultant</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P0–P3</td>
+<td>full</td>
+<td>960</td>
+<td>960</td>
+<td>Billing rules with Metz's SMEs, document-reader setup, triage queues</td>
+</tr>
+<tr>
+<td>Functional Consultant</td>
+<td>regular · offshore, masked</td>
+<td>1</td>
+<td>P1–P3</td>
+<td>full</td>
+<td>880</td>
+<td>880</td>
+<td>~40 Care Programs, permission set groups, notifications (E07), audit reports (E09)</td>
+</tr>
+<tr>
+<td>Developer, data (Logic &amp; Integration Engineer)</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P1–P3</td>
+<td>full</td>
+<td>880</td>
+<td>880</td>
+<td>Conversion rehearsal and production loads on real patient data (E08, Unknown)</td>
+</tr>
+<tr>
+<td>Quality Assurance (Logic Validator lead)</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P2–P3</td>
+<td>full</td>
+<td>640</td>
+<td>640</td>
+<td>Independent check on agent output; system integration test, Service Cloud regression, UAT on real data</td>
+</tr>
+<tr>
+<td>Quality Assurance (Logic Validator)</td>
+<td>regular · offshore, masked</td>
+<td>1</td>
+<td>P2–P3</td>
+<td>full</td>
+<td>640</td>
+<td>640</td>
+<td>Agent-amplified test execution through the hardening surge</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td><strong>13</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td><strong>10,560</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><em>Optional:</em> Change &amp; Adoption (Adoption Architect)</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P2–P4</td>
+<td>half</td>
+<td>360</td>
+<td>+360</td>
+<td>Intake and billing adoption; Metz owns enablement if declined</td>
+</tr>
+</tbody>
+</table>
+<h2>Traditional and augmented roster (same team): 10.3 / 10.2 program-average FTE</h2>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Seniority · location</th>
+<th>Count</th>
+<th>Phases</th>
+<th>Allocation</th>
+<th>Traditional hrs</th>
+<th>Augmented hrs</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Project / Program Manager</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P0–P4</td>
+<td>full</td>
+<td>1,320</td>
+<td>1,160</td>
+<td>Fixed-date regulated program; clearinghouse calendar; Metz's scheduling team</td>
+</tr>
+<tr>
+<td>Solution Architect</td>
+<td>senior · onshore</td>
+<td>1</td>
+<td>P0–P4</td>
+<td>full</td>
+<td>1,320</td>
+<td>1,160</td>
+<td>Accountable lead for the Care Program, claims and patient-data models</td>
+</tr>
+<tr>
+<td>Technical Architect, Salesforce</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P0–P4</td>
+<td>full; half in P4</td>
+<td>1,280</td>
+<td>1,120</td>
+<td>Data model, field security, conversion design, shared pipeline</td>
+</tr>
+<tr>
+<td>Technical Architect, MuleSoft (track lead)</td>
+<td>senior · onshore</td>
+<td>1</td>
+<td>M1–M4, P2–P4</td>
+<td>full M1–M3; half from end of M3 to P4</td>
+<td>960</td>
+<td>860</td>
+<td>X12 design, companion guides, production credentials; stays on at half time between partner testing and deploy</td>
+</tr>
+<tr>
+<td>MuleSoft Technical Consultant</td>
+<td>regular · offshore, masked</td>
+<td>2</td>
+<td>M2–M3</td>
+<td>full</td>
+<td>1,120</td>
+<td>1,040</td>
+<td>837P/835 build and test; owns MuleSoft QA</td>
+</tr>
+<tr>
+<td>Developer</td>
+<td>regular · offshore, masked</td>
+<td>2</td>
+<td>P1–P3</td>
+<td>full</td>
+<td>2,320</td>
+<td>2,000</td>
+<td>Claims, intake routing, coverage rules, locking</td>
+</tr>
+<tr>
+<td>Functional Consultant</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P0–P3</td>
+<td>full</td>
+<td>1,240</td>
+<td>1,080</td>
+<td>Billing rules and intake with Metz's SMEs</td>
+</tr>
+<tr>
+<td>Functional Consultant</td>
+<td>regular · offshore, masked</td>
+<td>1</td>
+<td>P1–P3</td>
+<td>full</td>
+<td>1,160</td>
+<td>1,000</td>
+<td>Care Program and declarative configuration volume</td>
+</tr>
+<tr>
+<td>Developer, data migration</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P1–P3</td>
+<td>full</td>
+<td>1,160</td>
+<td>1,000</td>
+<td>Real-patient-data conversion and loads</td>
+</tr>
+<tr>
+<td>Quality Assurance lead</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P2–P3</td>
+<td>full</td>
+<td>840</td>
+<td>720</td>
+<td>Test strategy, integration and regression testing, UAT</td>
+</tr>
+<tr>
+<td>Quality Assurance</td>
+<td>regular · offshore, masked</td>
+<td>1</td>
+<td>P2–P3</td>
+<td>full</td>
+<td>840</td>
+<td>720</td>
+<td>Test execution and regression scripts</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td><strong>13</strong></td>
+<td></td>
+<td></td>
+<td><strong>13,560</strong></td>
+<td><strong>11,860</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><em>Optional:</em> Change &amp; Adoption</td>
+<td>regular · onshore</td>
+<td>1</td>
+<td>P2–P4</td>
+<td>half</td>
+<td>+460</td>
+<td>+400</td>
+<td>Intake and billing adoption</td>
+</tr>
+</tbody>
+</table>
+<h2>Metz side (assumed, pending G0016)</h2>
+<p>Not counted in PS hours. Gap G0022 tracks this.
+- Product owner: half time in traditional and augmented, <strong>daily for AI-native</strong>.
+- Executive sponsor.
+- Billing SME and intake SME.
+- Data steward for old-system extracts.
+- IT for O365 decryption, SFTP and clearinghouse credentials.
+- Trading-partner testing lead for M3.
+- 3 UAT testers.
+- Metz's own scheduling build team.</p>
+<h2>Assumptions and range drivers</h2>
+<ul>
+<li><strong>Offshore work on masked data only (G0021).</strong> Offshore build, QA and MuleSoft work stays in masked sandboxes. Onshore owns migration loads, cutover, production credentials and UAT data. If Metz's patient-data policy bars offshore access even to masked environments, six offshore roles move onshore.</li>
+<li><strong>Range drivers:</strong></li>
+<li>E05: seven clearinghouses on the partners' schedules (tighten with G0001).</li>
+<li>E08: old system and volumes unknown (G0008, G0819).</li>
+<li>E04: claim line shape (G0401).</li>
+<li><strong>Client target:</strong> 29 January 2027 isn't reachable on any lane. The go/no-go and the option to keep billing in the old system to 31 March 2027 (G1007) is Metz's call in Phase 0.</li>
+</ul>
+<p><strong>About this roster.</strong> This roster and its FTE are a model-derived starting point that the Solution Lead validates; the final team is theirs to own. The least certain calls:
+- keeping two MuleSoft developers in the AI-native lane rather than one;
+- folding release management into the Salesforce Technical Architect;
+- a single onshore migration developer for an old system no one has named yet.</p>
+<p>Resourcing is still being refined. Treat this shape as decision-support that gets close, not a committed staffing plan.</p>
+<p><em>This figure is benchmark-based, derived from the AI model's training data and general delivery patterns (not Salesforce-validated) — not a commitment. Final figures are confirmed through the applicable commercial agreement.</em></p>
+<p><em>The AI-native band is provisional until AI-native delivery actuals accumulate. The lane is conditional on the M1–M5 operating-model commitments above.</em></p></section><hr class="sz-divider"><section id="efficiency" class="sz-section sz-doc"><div class="sz-section-eyebrow">Source document</div><p class="sz-banner">As of 2026-11-09.</p><h1>AI Delivery Efficiency Analysis: Metz/Chef2Home Health Cloud 2026</h1>
+<h2>So What</h2>
+<p><strong>~6–16% realized delivery efficiency at Mid readiness.</strong> A pace and quality lift within the same team shape: not headcount reduction, not a pricing input.</p>
+<p>Where the gains show up on this project:
+- <strong>Documentation &amp; Knowledge Management</strong> (~8–20%): E09, E10. Audit report specs, the cutover runbook and run-team handover docs draft well with AI.
+- <strong>Analysis &amp; Design</strong> (~7–18%): E02, E03, E04. Turning open questions and payer billing rules into design decisions moves faster.
+- <strong>Technical Engineering &amp; QA</strong> (~5–14%): E04, E05, E06, E08. Claims automation, 837P/835 mapping and migration transforms gain from AI drafting; X12 edge cases cap it.</p>
+<p><strong>Where AI does not help</strong>: clearinghouse trading-partner certification, payer companion-guide sign-off and alignment across Metz's billing, intake, IT and scheduling teams. The highest AI tax is on X12/EDI and data-conversion work.</p>
+<p><strong>To move up to High readiness (~7–19%)</strong>: confirm AI tooling approval in writing, publish PHI handling and masking rules for lower environments, stand up the shared source-controlled pipeline.</p>
+<p><strong>AI-native delivery (conditional):</strong> with the AI-native operating model in place, the band is ~19–27%. The qualification verdict is conditional. It depends on an empowered daily product owner, a daily build cadence, a named sponsor with the mandate, approved AI tooling and a ready release pipeline.</p>
+<h2>Headline</h2>
+<p><strong>Realized: ~6–16%</strong> (Mid readiness) · <strong>Task-level blend: ~25–45%</strong> · <strong>Realization factor: 0.25–0.35</strong> (regulated healthcare billing in a live, already-built org with a legacy migration and seven outside trading partners) · <strong>Confidence: Assumed</strong></p>
+<h2>Client-Readiness Scenarios</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Realized Band</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Low readiness</td>
+<td>~5–13%</td>
+<td>Gains stay modest if AI tool use on PHI isn't approved and the release path stays informal.</td>
+</tr>
+<tr>
+<td>Mid readiness (current ✓)</td>
+<td>~6–16%</td>
+<td>Speed matters and the sandbox is ready, but tooling approval and compliance posture are unconfirmed.</td>
+</tr>
+<tr>
+<td>High readiness</td>
+<td>~7–19%</td>
+<td>Tooling approved, masked data in the sandbox on day one and a daily-release pipeline let the team capture the upper end.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Current scenario</strong>: Mid (score 5/8)</p>
+<h3>Signals behind the score</h3>
+<ul>
+<li><strong>AI tooling posture</strong>: 1/2. Unknown; no evidence yet on Metz's AI tool approval.</li>
+<li><strong>Delivery velocity / speed bias</strong>: 2/2. Hard January target with billing live on day one, and the old system ends 31 March 2027; Metz chose AI-native delivery.</li>
+<li><strong>Data &amp; environment hygiene</strong>: 1/2. A new full sandbox is ready, but the live org is shared with Metz's own build team, there's no named release process and the old system is unknown.</li>
+<li><strong>Legal / security / compliance posture</strong>: 1/2. Unknown; PHI under Medicaid contracts, HIPAA and Shield posture not yet stated.</li>
+</ul>
+<h3>What it takes to move up</h3>
+<ul>
+<li><strong>Low → Mid</strong>: approve AI tooling for project data and sandboxes; stand up the shared source-controlled pipeline.</li>
+<li><strong>Mid → High</strong>: confirm AI tooling approval in writing; publish PHI handling and masking rules for lower environments.</li>
+</ul>
+<h2>By Category</h2>
+<h3>Technical Engineering &amp; QA: realized ~5–14% (task-level ~20–40%)</h3>
+<ul>
+<li><strong>Driving epics</strong>: E04 (L), E05 (XL), E06 (L), E08 (XL)</li>
+<li><strong>How it shows up here</strong>: AI drafts claims flows, 837P/835 mapping logic, test data and migration transforms. Companion-guide edge cases, partner-paced testing and PHI-safe test data hold the gain down.</li>
+</ul>
+<h3>Analysis &amp; Design: realized ~7–18% (task-level ~30–50%)</h3>
+<ul>
+<li><strong>Driving epics</strong>: E02 (L), E03 (L), E04 (L)</li>
+<li><strong>How it shows up here</strong>: Requirements analysis and design drafting for intake, Care Programs and billing rules speed up. Client decisions on claim line shape and lock points stay human.</li>
+</ul>
+<h3>Documentation &amp; Knowledge Management: realized ~8–20% (task-level ~35–55%)</h3>
+<ul>
+<li><strong>Driving epics</strong>: E09 (M), E10 (M)</li>
+<li><strong>How it shows up here</strong>: Audit report specs, test scripts, the cutover runbook and handover docs are documentation-heavy and draft well. Review for accuracy against Metz's processes remains.</li>
+</ul>
+<h3>Project Management &amp; Operations: realized ~3–11% (task-level ~15–30%)</h3>
+<ul>
+<li><strong>Driving epics</strong>: E10 (M)</li>
+<li><strong>How it shows up here</strong>: Status and RAID drafting help a little. Coordinating seven clearinghouses and two build teams in one org is human work.</li>
+</ul>
+<h2>Human-Only Work</h2>
+<ul>
+<li><strong>Project Pulse Reports</strong>: sponsor-level judgment on a fixed date.</li>
+<li><strong>Stakeholder Alignment</strong>: Metz billing, intake and IT, plus their scheduling team.</li>
+<li><strong>Conflict Resolution</strong>: release conflicts in a shared org.</li>
+<li><strong>Clearinghouse trading-partner certification</strong>: externally paced by seven outside parties; never compressed.</li>
+<li><strong>Payer companion-guide sign-off</strong>: payer-owned rules.</li>
+</ul>
+<h2>Assumptions &amp; Caveats</h2>
+<ul>
+<li>Task-level gains come from published 2022–2026 studies; a realization factor (by project shape) accounts for Amdahl's law, review/AI-tax overhead, and unmoved human-barrier work.</li>
+<li><strong>Honest range for coding</strong>: RCT evidence spans −19% (METR 2025 [1], mature OSS) to +21% (Paradis/Google 2024 [4], complex enterprise) to +55% (Peng/GitHub 2022 [3], greenfield lab). The realistic-enterprise row is the defensible starting point for Salesforce integration and custom work.</li>
+<li>Individual gains ≠ team gains: DORA [5] measures throughput rising with AI while delivery stability still falls. Ground claims in project-level outcomes, not developer self-report.</li>
+<li>AI tooling and legal posture are scored at unknown defaults; confirming them may move the scenario.</li>
+<li>The AI-native band is provisional and conditional on the operating-model commitments above.</li>
+<li>Bands are qualitative and project-specific: no hours, FTE, or cost implications are computed or implied.</li>
+</ul>
+<h2>Sources</h2>
+<p>[1] METR (2025; Feb 2026 follow-up): RCT of experienced open-source developers; measured ~19% slower with AI, driven by review burden.
+[2] BCG × Harvard (Dell'Acqua et al., 2023): consulting tasks inside the "jagged frontier" ~25% faster with higher quality; outside it, performance dropped.
+[3] Peng et al., GitHub (2022): lab RCT on a greenfield task, ~55% faster; not representative of enterprise work.
+[4] Paradis et al., Google (2024): RCT on a complex enterprise task, ~21% time reduction.
+[5] DORA 2025 State of AI-assisted Software Development: AI raises throughput but still lowers delivery stability.</p></section><hr class="sz-divider"><section id="adrs" class="sz-section sz-doc"><div class="sz-section-eyebrow">Architecture Decision Records</div><div class="sz-card sz-doc"><h1>0001 — Health Cloud is built into the existing Chef2Home production Salesforce org</h1>
+<p><strong>Date:</strong> 2026-11-06 · <strong>Status:</strong> accepted · <strong>Source:</strong> client-supplied</p>
+<h2>Context</h2>
+<p>Chef2Home already runs Service Cloud in production. Delivery management (drivers on the Salesforce mobile app, meal rotation and schedule custom objects) is already built in that org. Finance (Certinia) runs in a separate Metz Salesforce org.</p>
+<h2>Decision</h2>
+<p>Health Cloud, the intake and document automation, and the claims (837) and remittance (835) integration are added to the existing Chef2Home org. The new full sandbox is used for the build. No new org, and no consolidation with the Certinia org.</p>
+<h2>Consequences</h2>
+<ul>
+<li>Every design must coexist with live Service Cloud configuration and the client's custom delivery and scheduling objects, so regression testing of existing processes is in scope.</li>
+<li>Health Cloud foundational prerequisites apply to a live org (see 0002).</li>
+<li>Finance sync to the Certinia org is out of this phase. Reporting covers the gap.</li>
+</ul>
+<h2>Grounds</h2>
+<ul>
+<li>Scoping questionnaire (discovery-notes/Customer_Metz Culinary Management 2026 - Scoping Questions v1.pdf, p.1): "Will Salesforce be allowed to build on top of Metz existing Chef2Home salesforce org?" → "Yes"; "We have a new full sandbox for this purpose"; "we are in production with Service Cloud."</li>
+<li>Same, p.4: "The financial system is in our other SF org. We use Certina" → "Out of scope for this phase. We can use reports for now."</li>
+</ul></div><div class="sz-card sz-doc"><h1>0002 — Chef2Home clients are modeled as person accounts</h1>
+<p><strong>Date:</strong> 2026-11-06 · <strong>Status:</strong> accepted · <strong>Source:</strong> scopezilla-recommended</p>
+<h2>Context</h2>
+<p>Health Cloud requires patients and members to be modeled as person accounts to use its functionality fully [KA-41084]. Turning on person accounts is permanent [KA-41826]. The scoping questionnaire says the Funding Source object is "a related object to the contact", so Chef2Home clients are Contacts in the production org today, not person accounts (G0801).</p>
+<h2>Decision</h2>
+<p>Clients are modeled as person accounts. Person accounts are turned on in the Chef2Home org (E01), and converting the existing client Contacts to person accounts is in scope (E08). Accepted by the Solution Lead on 2026-11-06; amended 2026-11-09 to bring the conversion into scope. The conversion method (in-place record-type change vs. new records with re-pointed children) is a detailed-design decision (G0802).</p>
+<h2>Consequences</h2>
+<ul>
+<li>Converting existing client Contacts, and checking every custom object, report, flow and integration that references them (including Metz's scheduling objects and the driver mobile flows), is in-scope work in E08.</li>
+<li>The in-place method has strict prerequisites (one contact per account, same owner and currency, no portal users) and drops some Contact fields unless copied first [KA-4956][KA-37787]; rehearse it in the full sandbox [KA-45683].</li>
+<li>The client must approve the decision to turn person accounts on, because it can't be undone.</li>
+</ul>
+<h2>Grounds</h2>
+<ul>
+<li>[KA-41084]: "In Health Cloud, always model your patients or members as person accounts." / "You can't fully use Health Cloud functionality if you don't model your patients and members as person accounts."</li>
+<li>[KA-41826]: "Turning on Person Accounts is permanent."</li>
+<li>Solution Lead direction, 2026-11-06: "assume that person accounts are turned on or will be turned on."</li>
+<li>Solution Lead direction, 2026-11-09: "add person account conversion into the scope assumption."</li>
+<li>Scoping questionnaire v2 p.2: "A related object to the contact called Funding Source."</li>
+</ul></div><div class="sz-card sz-doc"><h1>0003 — Each funding source is a Care Program; coverage periods are child records of a single enrollment</h1>
+<p><strong>Date:</strong> 2026-11-06 · <strong>Status:</strong> accepted · <strong>Source:</strong> scopezilla-recommended</p>
+<h2>Context</h2>
+<p>Metz has about 40 funding sources (Medicaid waivers, managed care plans, county and city levies). A client can have only one active funding source at a time, and clients move between them ("Funding Source change"). Every delivery must tie back to the specific funding source in effect, and history is required for audit. The client already has a custom Funding Source object related to Contact. Health Cloud allows a given enrollee to be enrolled in a given care program only once, and blocks duplicate enrollments, including in bulk loads [KA-18914].</p>
+<h2>Decision</h2>
+<ul>
+<li>Each funding source is configured as a Health Cloud Care Program.</li>
+<li>A client has one Care Program Enrollment per funding source, ever. A client who returns to a prior funding source has the existing enrollment reactivated rather than a new one created.</li>
+<li>Each stretch of coverage (start date, end date, authorization reference, active flag) is a child coverage-period record under the enrollment. A validation rule allows only one active coverage period per client across all enrollments.</li>
+<li>Deliveries and claims relate to the coverage period, which keeps the audit trail when a client moves (for example Anthem → CareSource → Anthem). Field history and record locking apply to coverage periods.</li>
+</ul>
+<h2>Consequences</h2>
+<ul>
+<li>The client's existing custom Funding Source object and its links to the delivery and scheduling objects must be mapped or migrated to this model. The scheduling objects themselves stay client-owned.</li>
+<li>Migrated history must create one enrollment per client and funding source, with coverage periods underneath, to avoid the duplicate-enrollment error [KA-18914].</li>
+<li>The 40 programs and their billing-rule attributes (meal quantity, delivery frequency, per-day vs. per-delivery billing) become Care Program configuration data.</li>
+</ul>
+<h2>Grounds</h2>
+<ul>
+<li>Scoping questionnaire p.1: "1. 40 / 2. Meal qty, delivery frequency / 3. No. We call it Funding Source change. You can only be in one active funding source at a time."</li>
+<li>Scoping questionnaire p.2: "A related object to the contact called Funding Source… start date, end date, active checkbox. Validation rule that only one can be active at a time. Each delivery needs to tie back to that specific funding source… History is required for Audit purposes."</li>
+<li>[KA-18914]: "You can enroll a care program enrollee in the same program only once." / "This constraint also applies to bulk operations."</li>
+<li>Solution Lead direction, 2026-11-06: "Only one care program enrollment at a time"; accepted the reopen-plus-coverage-period design.</li>
+</ul></div></section>
+<hr class="sz-divider">
+<p class="sz-note">Generated from the Scopezilla project data · November 2026 · Salesforce Professional Services · Internal scoping — pricing not included (pricing deferred).</p>
+</main>
+<script>
+document.querySelectorAll('.sz-sidebar-link').forEach(function(a){a.addEventListener('click',function(){document.querySelector('.sz-sidebar').classList.remove('open');document.getElementById('sz-overlay').classList.remove('active');});});
+document.querySelectorAll('.sz-filter').forEach(function(f){
+  var tbl=document.getElementById(f.dataset.table);
+  f.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){
+    f.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');
+    tbl.querySelectorAll('tbody tr').forEach(function(tr){tr.style.display=(b.dataset.cat==='all'||tr.dataset.cat===b.dataset.cat)?'':'none';});
+  });});
+});
+</script>
+</body>
+</html>
