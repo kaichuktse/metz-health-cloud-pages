@@ -144,7 +144,7 @@
   .num{text-align:right;white-space:nowrap;}
   tr.sz-total td{font-weight:700;background:#DCEBFF!important;}
   tr.sz-opt td{color:var(--sf-text-weak);font-style:italic;}
-  .g-wrap{background:#fff;border-radius:var(--radius-md);box-shadow:var(--shadow-brand);padding:var(--space-md) var(--space-md) 30px;overflow-x:auto;margin-bottom:var(--space-md);}
+  .g-wrap{background:#fff;border-radius:var(--radius-md);box-shadow:var(--shadow-brand);padding:40px var(--space-md) 30px;overflow-x:auto;margin-bottom:var(--space-md);}
   .g-row{display:flex;align-items:center;min-height:26px;}
   .g-sep{min-height:8px;border-bottom:1px solid var(--sf-light-bg);margin-bottom:4px;}
   .g-lbl{flex:0 0 300px;font-size:12px;padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -156,6 +156,9 @@
   .g-bar--mule{background:#06A59A;}
   .g-bar--ramp{background:repeating-linear-gradient(45deg,var(--ext-yellow-70),var(--ext-yellow-70) 6px,var(--ext-yellow) 6px,var(--ext-yellow) 12px);color:var(--sf-navy);}
   .g-bar--care{background:var(--sf-text-weak);}
+  .g-bar--k-design{background:#5C6B7A;} .g-bar--k-found{background:#7526E3;} .g-bar--k-build{background:#0176D3;} .g-bar--k-test{background:#DD7A01;}
+  .g-ms--deadline{border-left:2px dashed #EA001E!important;}
+  .g-ms--deadline .top{position:absolute;top:-34px;left:-4px;font-size:10px;font-weight:700;color:#EA001E;white-space:nowrap;}
   .g-body{position:relative;}
   .g-ms-layer{position:absolute;top:0;bottom:0;left:300px;right:0;pointer-events:none;}
   .g-ms{position:absolute;top:0;bottom:0;border-left:2px dashed var(--client-primary);}
@@ -702,7 +705,7 @@
 </tr>
 </tbody>
 </table>
-<p><em>Grounding: 26 decisions tagged — 21 grounded, 2 inferred, 3 flagged assumptions: billing-mapping data object keyed on meal type, X12 EDI Connector covers the payers' companion guides, remittance history store (Option B). Client-responsibility assumption: Metz IT decrypts on the mail server.</em></p></section><hr class="sz-divider"><section id="delivery" class="sz-section sz-doc"><div class="sz-section-eyebrow">Source document</div><p class="sz-banner">As of 2026-11-09, including the added Health Cloud design week. This is the current plan.</p><h1>Delivery Plan: Metz/Chef2Home Health Cloud 2026</h1>
+<p><em>Grounding: 26 decisions tagged — 21 grounded, 2 inferred, 3 flagged assumptions: billing-mapping data object keyed on meal type, X12 EDI Connector covers the payers' companion guides, remittance history store (Option B). Client-responsibility assumption: Metz IT decrypts on the mail server.</em></p></section><hr class="sz-divider"><section id="delivery" class="sz-section sz-doc"><div class="sz-section-eyebrow">Source document</div><p class="sz-banner">As of 2026-11-09 (26-week benchmark plan). Superseded by the two delivery options on the overview.</p><h1>Delivery Plan: Metz/Chef2Home Health Cloud 2026</h1>
 <p><strong>Status:</strong> Roadmap, 2026-11-09 · <strong>Builds on:</strong> <code>outputs/01-solution.md</code>, 10 epics, 136 gaps</p>
 <p><strong>Total program duration: 26 weeks (per user commitment)</strong>, AI-native delivery. This lane holds only if Metz commits to the AI-native operating model: an empowered daily product owner, a daily build cadence, a named sponsor with the mandate, AI tooling approved for PHI and a ready release pipeline. If those don't land, the plan moves to the AI-augmented lane at 29 weeks; traditional delivery is 33 weeks. Go-live is at the end of week 24, followed by two weeks of hypercare.</p>
 <p><strong>Against the client target:</strong> 29 January 2027 is about 11.5 weeks out; this plan goes live about 13 weeks after that. The go/no-go and fallback (G1007), including whether billing stays in the old system until 31 March 2027, is the client's call and needs to be made in Phase 0.</p>
@@ -1402,7 +1405,7 @@
 <li>Solution Lead direction, 2026-11-06: "Only one care program enrollment at a time"; accepted the reopen-plus-coverage-period design.</li>
 </ul></div></section>
 <hr class="sz-divider">
-<p class="sz-note">Generated from the Scopezilla project data · November 2026 · Salesforce Professional Services · Internal scoping — pricing not included (pricing deferred).</p>
+<p class="sz-note">Generated from the Scopezilla project data · 10 November 2026 · Salesforce Professional Services · Internal scoping — pricing not included (pricing deferred).</p>
 </main>
 <script>
 document.querySelectorAll('.sz-sidebar-link').forEach(function(a){a.addEventListener('click',function(){document.querySelector('.sz-sidebar').classList.remove('open');document.getElementById('sz-overlay').classList.remove('active');});});
